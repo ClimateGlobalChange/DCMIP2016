@@ -1,0 +1,121 @@
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass{article}   
+\usepackage[american]{babel} 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage{amssymb,amsmath}
+\usepackage{graphicx}
+\usepackage{siunitx}
+                    
+\title{Dynamical Core Model Intercomparaison Project (DCMIP) Test Case Interface Documment}                  % Titre du document
+\author{AntoninVerlet-Banide}                          % Auteur
+\date{20/04/2015}                              % Date de création
+\begin{document}                               % Début du document
+\maketitle{}                                   % Génération du titre
+
+\section{Baroclinic Test case}   
+ 
+~\\ This baroclinic instability test is being use on 3D atmospheric models instability test evolution. It is a pressure-based and height-based test. 
+
+ \subsection{ Inisialization }
+ ~\\ The tes case is inisialized with a constant surface pressure and with a surface geopotential equal to zero. The meridional wind is initialized as zero and will only be dependent of the velocity filed perturation. 
+
+\subsection{Main equations}
+
+~\\ As mention it is a presured and height based model.  The temperature equation is rules by:
+
+\begin{equation*}
+t=\frac{1}{ratio^2(\tau_1-\tau_2 \text{inttermT})} 
+\end{equation*}
+
+~\\ The pressure follow an hydrostatic rule define as :
+\begin{equation}
+p=p_0\exp(-\frac{g}{Rd}(\tau_{\text{int}_1}-\tau_{\text{int}_2}\text{intterm}_T))
+\end{equation}
+~\\ With $\text{intterm}_T$ representing the interior term on the temperature expression. 
+\clearpage
+
+
+~\\ The zonal velocity follow the following equation.  
+\begin{equation}
+ u=-\Omega_{ref} a_{ref} cos(\varphi)+\sqrt{(\Omega_{ref} a_{ref} cos(\varphi))^2+ a_{ref} \cos(\varphi)U)}
+\end{equation}
+
+A perturbation equation is applied to the velocity field. Depending of the model use stream fonction perturbation or exponential perturbation are applied on the the velocity field. A meridional velocity is noticed for stream function perturbation since it affect both zonal and meridional velocity field.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+\subsection{Perturbations}
+
+
+\begin{equation}
+ q_{ratio}=q_0exp \left[-\frac{\phi}{\phi_{\omega}}^4 \right]exp \left[- \left(\frac{(\eta-1)p_0}{p_{\omega}} \right)^2\right]
+\end{equation}
+
+\begin{equation}
+ q_{numb}=q_{ratio}q_{gc}\frac{P_{sv}}{p}\left[1-\frac{L_{vap}}{R_{vap}}\frac{\rho R_d}{p} + \frac{L_{vap}}{R_{vap} T_{ref}} \right]
+\end{equation}
+
+\begin{equation}
+ q_{den}=\left[1+\frac{q_{ratio}q_{gc}P_{sv}}{p^2}\rho R_d M_{vap} \right]
+\end{equation}
+
+\begin{equation}
+ q=q_{num}/q_{den}
+\end{equation}
+
+Great circle perturbation \\
+\begin{equation*}
+\text{Circle}_{\text{great}}=\frac{1}{\text{Pert}_{\text{expr}}}\text{arcos}(\sin(\text{Pert}_{\text{lat}}))\sin(\text{lat})+\cos(\text{Pert}_{\text{lat}})\cos(\text{lat})\cos(\text{lon}-\text{Pert}_{\text{lon}})
+\end{equation*}
+
+
+
+
+\clearpage 
+
+\section{Tropical cyclone}
+
+\subsection{ Inisialization }
+
+~\\ 
+
+\begin{equation}
+p_s=p_0-\delta p \exp(-\frac{r_g}{r_p}^{n_r})
+\end{equation}
+
+
+\clearpage 
+\appendix
+\section{Annexe}
+
+\begin{align*}
+A&= \frac{1}{lapse} \\
+B&=\frac{T_0-T_P}{T_0T_P} \\
+C&=0.5(K+2) \frac{T_E-T_P}{T_ET_P} \\
+H&=R_d\frac{T_0} {g}\\
+Z&=\frac{z}{B H}  
+\end{align*}
+
+
+\begin{equation*}
+T_0=0.5(T_E +T_P)
+\end{equation*}
+
+~\\Earth scalling parameter is used for the baroclinic instability, it initialization doesn't change from non scaled baroclinic instability. However the scalling parameter X as an effect on the the planet radius and it rotation rate. The impact on both of those parameter are the following $a_{ref}=a_{earth}/X$ and $\Omega_{ref}=\Omega{earth}X$ , nevertheless the product of the two is an changed 
+
+
+
+\end{document}    
