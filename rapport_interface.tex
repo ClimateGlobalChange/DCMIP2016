@@ -14,26 +14,157 @@
 \begin{document}                               % Début du document
 \maketitle{}                                   % Génération du titre
 
+
+\section{Practical Considerations}
+
+\subsection{List of Symbols}
+Throughout this test case document we will use $\lambda \in [0, 2 \pi)$ to denote longitude, $\varphi \in [-\pi/2, \pi/2]$ to represent latitude, $z$ to represent the height with respect to the mean sea level (assumed to be zero), and $p$ to symbolize the pressure. Table \ref{tab:symbols} lists the symbols used for the initialization of the model variables in sections \ref{sec:test1} through \ref{sec:test5}. 
+
+\begin{table}[h]
+\caption{List of symbols for the model initialization} \label{tab:symbols}
+\begin{center}
+\begin{tabular}{cl}
+\hline Symbol & Description \\ \hline 
+$\lambda$ & Longitude (in radians) \\
+$\varphi$ & Latitude (in radians) \\
+$z$ & Height with respect to mean sea level (set to zero) \\
+$p_s$ & Surface pressure ($p_s$ of moist air if $q>0$) \\
+$\Phi_s$ & Surface geopotential \\
+$z_s$ & Surface elevation with respect to mean sea level (set to zero) \\
+$u$ & Zonal wind \\
+$v$ & Meridional wind \\
+$w$ & Vertical velocity \\
+$\omega$ & Vertical pressure velocity  \\
+$\delta$ & Divergence\\
+$\zeta$ & Relative vorticity\\
+$p$ & Pressure (pressure of moist air if $q>0$) \\
+$\rho$ & Density (density of moist air if $q>0$)\\
+$T$ &Temperature \\
+$T_v$ & Virtual temperature \\
+$\Theta$ & Potential temperature \\
+$\Theta_v$ & Virtual potential temperature \\
+$q$ & Specific humidity \\
+$P_{ls}$ & Large-scale precipitation rate \\
+$q_1, q_2, q_3, q_4$ & Passive mixing-ratio like tracers \\
+\hline 
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{List of Physical Constants}
+A list of physical constants which are used throughout this document is given in Table \ref{tab:PhysicalConstants}.  Constants which are specific to each test case are similarly tabulated at the beginning of each section.
+
+\begin{table}[h]
+\caption{A list of physical constants used in this document.} \label{tab:PhysicalConstants}
+%\ \\
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
+\hline Constant & Description & Value \\
+\hline $a_{\tiny \mbox{ref}}$ & Radius of the Earth & $6.37122 \times 10^{6}\ \mbox{m}$ \\
+$\Omega_{\tiny \mbox{ref}}$ & Rotational speed of the Earth & $7.292\ \times 10^{-5}\ \mbox{s}^{-1}$ \\
+$X$ & Reduced-size Earth reduction factor & variable (default $= 1$) \\
+$a$ & Scaled radius of the Earth & $a_{\tiny \mbox{ref}} / X$ \\
+$\Omega$ & Scaled rotational speed of the Earth & $\Omega_{\tiny \mbox{ref}} \cdot X$ \\
+$g$ & Gravity & $9.80616\ \mbox{m}\ \mbox{s}^{-2}$ \\
+$p_0$ & Reference pressure & $1000\ \mbox{hPa}$ \\
+$c_p$ & Specific heat capacity of dry air at constant pressure & $1004.5\ \mbox{J}\ \mbox{kg}^{-1}\ \mbox{K}^{-1}$ \\
+$c_v$ & Specific heat capacity of dry air at constant volume & $717.5\ \mbox{J}\ \mbox{kg}^{-1}\ \mbox{K}^{-1}$ \\
+$R_d$ & Gas constant for dry air & $287.0\ \mbox{J}\ \mbox{kg}^{-1}\ \mbox{K}^{-1}$ \\
+$R_\nu$ & Gas constant for water vapor & $461.5$ J kg$^{-1}$ K$^{-1}$ \\
+$\kappa$ & Ratio of $R_d$ to $c_p$ & $R_d/c_p = 2/7$ \\
+$\varepsilon$ & Ratio of $R_d$ to $R_\nu$ & $R_d/R_\nu \approx 0.622$ \\
+$\rho_{water}$ & Density of water & 1000 kg m$^{-3}$ \\
+\hline 
+\end{tabular*}
+
+\end{table}
+
+\clearpage
 \section{Baroclinic Test case}   
  
+
+
 ~\\ This baroclinic instability test is being use on 3D atmospheric models instability test evolution. It is a pressure-based and height-based test. 
 
- \subsection{ Inisialization }
+ 
+\begin{table}[h]
+
+\caption{List of constants used for the Baroclinic Instability test cases (Test $4-x$).}
+\label{test4:tab}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
+\hline Constant & Value & Description \\
+\hline 
+$z_{\tiny \mbox{top}}$ & $44000\ \mbox{m}$ & Recommended height position of the model top \\
+$p_{\tiny \mbox{top}}$ & $\approx 2.26$ hPa & Recommended pressure at the model top\\
+$X$ & various & Reduced-size planet scaling factor, see below\\
+$a$ & $a_{\tiny \mbox{ref}}/X$ & Scaled radius of the Earth \\
+$Z_r$ & $(z+a)/a$ & Radius Ratio\\
+$\Omega$ & $\Omega_{\tiny \mbox{ref}}X$ & Scaled angular speed of the Earth \\
+$p_s$ & $1000\ \mbox{hPa}$ & Surface pressure (constant) \\
+$p_0$ & $1000\ \mbox{hPa}$ & Reference pressure (constant) \\
+$\eta_0$ & $0.252$ & Value of $\eta$ at a reference level (position of the jet)\\
+$\eta_t$ & $0.2$ & Value of $\eta$ at the tropopause \\
+$\eta_s$ & $1$ & Value of $\eta$ at the surface \\
+$u_0$ & $35\ \mbox{m\ s}^{-1}$ & Maximum amplitude of the zonal wind \\
+$u_p$ & $1\ \mbox{m\ s}^{-1}$ & Maximum amplitude of the zonal wind perturbation \\
+$\lambda_c$ & $\pi / 9$ & Longitude of the zonal wind perturbation centerpoint (20$^\circ$ E)\\
+$\varphi_c$ & $2 \pi / 9$ & Latitude of the zonal wind perturbation centerpoint (40$^\circ$ N)\\
+$R$ & $a / 10$ & Radius of the zonal wind perturbation \\
+$T_0$ & $288\ \mbox{K}$ & Horizontal-mean temperature at the surface \\
+$T_p$ & $240 \ \mbox{K}$ & Temperature at the polar surface\\
+$\Gamma$ & $0.005\ \mbox{K\ m}^{-1}$ & Temperature lapse rate \\
+$\Delta T$ & $4.8 \times 10^{5}\ \mbox{K}$ & Empirical temperature difference \\
+$\text{lapse}$ & $0.005$ & Lapse rate parameter \\
+$K$ & $3$ & jet width parameter \\
+\hline 
+\end{tabular*}
+
+\end{table}
+
+\clearpage
+\subsection{ Inisialization }
  ~\\ The tes case is inisialized with a constant surface pressure and with a surface geopotential equal to zero. The meridional wind is initialized as zero and will only be dependent of the velocity filed perturation. 
 
-\subsection{Main equations}
+~\\Interior term on temperature expression:
+
+\begin{equation*}
+I_{T}=(Z_r\cos(\varphi))^K-\frac{K}{K+2}(Z_r\cos(\varphi))^{K+2}
+\end{equation*}
 
 ~\\ As mention it is a presured and height based model.  The temperature equation is rules by:
 
+
+
 \begin{equation*}
-t=\frac{1}{ratio^2(\tau_1-\tau_2 \text{inttermT})} 
+T_v=\frac{1}{Z_r^2(\tau_1-\tau_2 I_T)} 
+\label{virtTemp}
 \end{equation*}
+
+
+~\\ With $\tau_1$ and $\tau_2$ define as follow
+\begin{equation*}
+\tau_1=\frac{1}{T_0\exp\left(\text{lapse}\frac{z}{T_0}\right)} + \frac{T_0-T_p}{T_0T_p}\left(1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
+\end{equation*}
+
+
+
+\begin{equation*}
+\tau_2=0.5(K-2)\frac{T_0-T_p}{T_0T_p}\left(1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
+\end{equation*}
+
 
 ~\\ The pressure follow an hydrostatic rule define as :
 \begin{equation}
-p=p_0\exp(-\frac{g}{Rd}(\tau_{\text{int}_1}-\tau_{\text{int}_2}\text{intterm}_T))
+p=p_0\exp(-\frac{g}{Rd}(\tau_{\text{int}_1}-\tau_{\text{int}_2}I_T))
 \end{equation}
-~\\ With $\text{intterm}_T$ representing the interior term on the temperature expression. 
+
+~\\with $\tau_{\text{int}_1}$ and $\tau_{\text{int}_2}$ define as
+\begin{equation*}
+\tau_{\text{int}_1}=\frac{\exp\left( \text{lapse}\frac{z}{T_0} \right)-1}{\text{lapse}}+z\frac{T_0-T_p}{T_0T_p}\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
+\end{equation*}
+\begin{equation*}
+\tau_{\text{int}_2}=0.5(K-2)\frac{T_0-T_p}{T_0T_p}z\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
+\end{equation*}
+
 \clearpage
 
 
@@ -48,21 +179,51 @@ A perturbation equation is applied to the velocity field. Depending of the model
 
 
 
-
-
-
-
-
-
-
-
  
 \subsection{Perturbations}
 
+\begin{table}[h]
 
+\caption{List of additional constants used for the Moist Baroclinic Instability test cases (Test $4-2$), see also Table \ref{test4:tab}.}
+\label{test42:tab}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
+\hline Constant & Value & Description \\
+\hline 
+$X$ & $1$ & small-planet scaling factor (regular-size Earth)\\
+$\varphi_w$ & $2 \pi / 9$ & Specific humidity latitudinal width parameter $(40^\circ)$\\
+$p_w$ & $340\ \mbox{hPa}$ & Specific humidity vertical pressure width parameter \\
+$q_0$ & $0.021$ kg/kg& Maximum specific humidity amplitude \\
+$p_0$ & $1000$ hPa& Surface pressure \\
+\hline 
+\end{tabular*}
+
+\end{table}
+
+\subsubsection*{Moist initial conditions}
+The initial conditions for the moist baroclinic wave are almost identical to the initial conditions for the dry baroclinic wave. We utilize the regular-size planet with the scaling factor $X=1$. The differences to the dry baroclinic wave test case 4-1 are that the original temperature equation $T$ now gets interpreted as an equation for the virtual temperature $T_v$, the formally dry surface pressure $p_s = p_0$ gets interpreted as the surface pressure of the moist air, the definition of the density needs to utilize the virtual temperature instead of the temperature, and an analytic equation for the specific humidity $q$ is added. The wind initialization of the moist baroclinic wave is identical to the dry case. No passive tracers $q_1$  or $q_2$ are specified.
+
+The specific humidity field is 
+\begin{eqnarray}
+q(\lambda, \varphi, \eta) &=& q_0 \exp\Bigg[- \Big(\frac{\varphi}{\varphi_{w}}\Big)^4 \Bigg] \exp\Bigg[- \Bigg(\frac{(\eta-1)p_0}{p_{w}}\Bigg)^2  \Bigg]
+\end{eqnarray}
+with the latitudinal width parameter $\varphi_{w} = 2 \pi / 9$ (corresponding to $40^\circ$ latitude) and the pressure-based width parameter $p_w = 340$ hPa. Since the surface pressure of the moist air $p_s$ is constant with $p_s = p_0 = 1000$ hPa  the vertical coordinate $\eta$ is represented by $\eta = p/p_0$. The functional form of $q$ and its parameters were inspired by observations. This moisture fields leads to maximum relative humidities around 90\% in the lower levels of the midlatitudes, and around 70\% in the topics.
+
+This virtual temperature $T_v$ field is given by the original temperature definition in (\ref{virtTemp}),
+
+The density of the moist air is defined by the ideal gas law
+\begin{equation} \label{eq:density_test4m}
+\rho(\lambda, \varphi, \eta) = \frac{p(\lambda, \varphi, \eta)}{R_d \,T_v(\lambda, \varphi, \eta)}.
+\end{equation} 
+and utilizes the pressure of the moist air and the virtual temperature.
+
+The formulation of the virtual temperature and specific humidity leads to the analytic representation of the temperature
 \begin{equation}
- q_{ratio}=q_0exp \left[-\frac{\phi}{\phi_{\omega}}^4 \right]exp \left[- \left(\frac{(\eta-1)p_0}{p_{\omega}} \right)^2\right]
+\label{test42:T}
+T(\lambda,\varphi,\eta) = \frac{T_v(\lambda,\varphi,\eta)}{1+0.608 \,q(\lambda, \varphi, \eta)}
 \end{equation}
+This temperature is colder than the original dry temperature. However, note that in the moist case the virtual temperature and moist pressure determine the strength of the pressure gradient term in the momentum equations. Since these are identical to the temperature and pressure in the dry case, the forcing by the pressure gradient term is the same in both the dry and moist variant of the baroclinic wave. The moist variant of the baroclinic wave without the temperature forcing from large-scale condensation should lead to almost identical results when compared to the dry version. Very small variations are expected since the moisture gets independently transported as a passive tracer in this case and some models utilize the moist variant of the physical constant $c_p$. If possible, the dry $c_p$ should be used. Comparing the evolution of the dry baroclinic wave to its moist variant (without large-scale condensation) can serve as a first sensibility check.
+
+
 
 \begin{equation}
  q_{numb}=q_{ratio}q_{gc}\frac{P_{sv}}{p}\left[1-\frac{L_{vap}}{R_{vap}}\frac{\rho R_d}{p} + \frac{L_{vap}}{R_{vap} T_{ref}} \right]
@@ -82,19 +243,199 @@ Great circle perturbation \\
 \end{equation*}
 
 
-
-
 \clearpage 
+
+
 
 \section{Tropical cyclone}
 
+\begin{table}[h]
+
+\caption{List of constants used for the Simplified Tropical Cyclone Experiments (Tests 5-1 and 5-2)}
+
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
+\hline Constant & Value & Description \\
+\hline
+$X$ & $1$ & small-planet scaling factor (regular-size Earth)\\
+$z_t$ & $15000$ m & Tropopause height \\
+$q_0$ & $0.021$ kg/kg & Maximum specific humidity amplitude \\
+$q_t$ & $10^{-11}$ kg/kg & Specific humidity in the upper atmosphere \\
+$T_0$ & $302.15$ K & Surface temperature of the air \\
+$T_s$ & $302.15$ K & Sea surface temperature (SST), 29 C$^\circ$\\
+$z_{q1}$ & $3000$ m & Height related to the linear decrease of $q$ with height \\
+$z_{q2}$ & $8000$ m & Height related to the quadratic decrease of $q$ with height \\
+$\Gamma$ & $0.007$\ K\ m$^{-1}$ & Virtual temperature lapse rate \\
+$p_{b}$ & $1015$ hPa & Background surface pressure \\
+$\varphi_c$ & $\pi / 18$ & Initial latitude of vortex center \\
+$\lambda_c$ & $\pi$ & Initial longitude of vortex center \\
+$\Delta p$ & $11.15$ hPa & Pressure perturbation at vortex center \\
+$r_p$ & $282000$ m & Horizontal half-width of pressure perturbation \\
+$z_p$ & $7000$ m & Height related to the vertical decay rate of $p$ perturbation \\
+$\epsilon$ & $10^{-25}$ & Small threshold value \\
+\hline 
+\end{tabular*}
+
+\end{table}
+
+
 \subsection{ Inisialization }
 
-~\\ 
+
+~\\ The background state consists of a prescribed specific humidity profile, virtual temperature and pressure profile.  These parameters are chosen to roughly match an observed tropical sounding documented in \cite{jordan:58}.  The background specific humidity profile $\overline{q}(z)$ as a function of height $z$ is :
 
 \begin{equation}
-p_s=p_0-\delta p \exp(-\frac{r_g}{r_p}^{n_r})
+\begin{split}
+\overline{q}(z)&=q_0 \exp\left(\frac{-z}{z_{q1}}\right)\exp\left(-\left(\frac{z}{z_{q2}}\right)^2\right) \text{ ~~for   } 0 \leq z \leq z_t \\
+\overline{q}(z)&=q_t  \text{ ~~for   }  z_t \leq z
+\end{split}
 \end{equation}
+
+
+~\\The background virtual temperature sounding $\overline{T}_v(z)$ is split into two different representations for the lower and upper atmosphere.  It is given by
+\begin{equation}
+\begin{array}{ll} \label{eq2}
+%\phantom{T_{vt} = }\overline{T}_v(z) = T_{v0} - \Gamma z & \mbox{for} \; 0 \le z \le z_t, \\
+\overline{T}_v(z) = T_{v0} - \Gamma z & \mbox{for} \; 0 \le z \le z_t, \\
+\overline{T}_v(z) = T_{vt} = T_{v0} - \Gamma z_t & \mbox{for} \; z_t < z, 
+\end{array}
+\end{equation}
+~\\with the virtual temperature at the surface $T_{v0}$ = $T_0 (1+0.608 \, q_0)$ and the virtual temperature at the tropopause level $T_{vt}$ = $T_{v0} - \Gamma z_t$.  As a result, the background temperature profile $\overline{T}(z)$ is
+\begin{eqnarray} \label{eq3}
+\overline{T}(z) = \frac{\overline{T}_v(z)}{1 + 0.608\ \overline{q}(z)}.
+\end{eqnarray}
+
+
+~\\ Surface pressure:
+\begin{equation}
+p_s=p_0-\delta p \exp\left(-\frac{r_g}{r_p}^{n_r}\right)
+\label{eqps}
+\end{equation}
+
+The background vertical pressure profile $\overline{p}(z)$ of the moist air is computed using the hydrostatic balance and the surface pressure equation (\ref{eqps}). The profile is given by:
+
+
+\begin{equation}
+\begin{split}
+\overline{p}(z)&=p_s \exp\left(-\left(\frac{z}{zp}\right)^{2}\right)\left(\frac{T_0-\gamma z}{T_0}\right)^{\frac{g}{R_d\gamma}} \text{ ~~for   } 0 \leq z \leq z_t \\
+\overline{p}(z)&=p_t \exp\left(-\frac{g(z_t-z)}{R_dT_{vt}}\right) \text{ ~~for   }  z_t \leq z
+\end{split}
+\end{equation}
+
+
+
+\subsection*{Axisymmetric Vortex}
+
+The axisymmetric virtual temperature $T_v(r,z)$ is computed using the hydrostatic equation and ideal gas law
+
+
+\begin{equation}
+T_v(r,z) = -\frac{g p(r,z)}{R_d} \left( \frac{\partial p(r,z)}{ \partial z} \right)^{-1}.
+\end{equation}  Again it can be written as a sum of the background state and a perturbation,
+\begin{equation} \label{eq:virt_temp}
+T_v(r,z) = \overline{T}_v(z) + T_v^\prime(r,z),
+\end{equation} where the virtual temperature perturbation is defined as
+
+
+\begin{equation}
+\begin{split}
+\overline{T}(z)&=\frac{T_{v0}-\Gamma z}{(1+0.608q(z))\left(1+\frac{2R_d(T_0-\Gamma z)z}{\left( g z_p^2\frac{1-p_s}{\delta_p}\exp\left(\left(\frac{g_r}{r_p}\right)^{1.5}\right)\exp\left(\left(\frac{z}{z_p}\right)^2\right) \right)}   \right)} \text{ ~~for   } 0 \leq z \leq z_t \\
+\overline{T}(z)&=T_{vt}  \text{ ~~for   }  z_t \leq z
+\end{split}
+\end{equation}
+
+~\\with the virtual temperature at the surface $T_{v0}$ = $T_0 (1+0.608 \, q_0)$ and the virtual temperature at the tropopause level $T_{vt}$ = $T_{v0} - \Gamma z_t$
+
+~\\Height equation:
+\begin{equation}
+z=\frac{T_0}{\Gamma}\left(1-\left(\frac{p}{p_s}\right) ^{\frac{R_d\Gamma}{g}}\right)
+\end{equation}
+
+
+
+
+Density:
+
+\begin{equation}
+\rho=\frac{p}{R_dT(1+0.608q)}
+\end{equation}
+
+
+\clearpage
+\section{Kessler Physics}
+
+Model Equations :
+
+~\\Pressure equation obey to the following equation, written using the moist equation of state.
+
+\begin{equation}
+p=\rho R_dT(1+0,61q_v)
+\end{equation}
+
+~\\ with $p$ the pressure , $\rho$ the density of moist air, $R_d$ the gas constant for dry air, $T$ the temperature and $q_v$ the mixing ratio of water vapor. The equation is rewritten as a nondimensional pressure $\Pi$ equation.
+
+\begin{equation}
+\Pi=\left(\frac{p}{p_0}\right)^{\frac{R_dT}{cp}}
+\end{equation}
+
+
+~\\To determine the saturation vapor mixing ratio the Teten's formula is used.
+
+\begin{equation}
+q_{vs}=\frac{3.8}{p}\exp\left(17.27\frac{\Pi \theta-273}{\Pi \theta-36}\right)
+\end {equation}
+
+
+
+~\\The autotconvection ($A_r$) and accreation ($C_r$) rates follow Kessler parametrization and are defined by :
+
+\begin{equation}
+\begin{split}
+A_r&=k_1(q_c-a) \\
+C_r&=k_2q_cq_r^{0.875}
+\end{split}
+\end{equation}
+~\\ With $k_1=0.001 \text{s}^{-1}$, $a=0.001 \text{g}.\text{g}^{-1}$ and $k_2=2.2 \text{s}^{-1}$ 
+
+~\\ Deriving from Klemp and Wilhelmson (1978) description of cloud water,rain water and water vapor mixing ratios. they are define as followed:
+\begin{equation}
+q_c^{n+1}=max(q_c^r-\Delta q_r,0)
+\end{equation}
+\begin{equation}
+q_r^{n+1}=max(q_r^r-\Delta q_r+sed,0)
+\end{equation}
+
+~\\with sed the sedimentation term and $\Delta q_r$ define as :
+\begin{equation}
+\Delta q_r=q_c^n-\frac{q_c^n-\Delta \text{t} max(A_r,0)}{1+\Delta \text{t} C_r}
+\end{equation}
+
+
+
+
+
+
+~\\ The Rain evaporation equation is defined similarly to Ogura and Takshasi (1971) description:
+
+\begin{equation}
+E_r=\frac{1}{\rho}\frac{\left(1-\frac{q_v}{q_{vs}}\right)C(\rho q_r)^{0.525}}{5.4\times10^5+\frac{2.55\times10^6}{pq_{vs}}}
+\end{equation}
+
+
+
+~\\ With ventilation factor C define as 
+\begin{equation}
+C=1.6+124.9(\rho q_r)^{0.2046}
+\label{venti}
+\end{equation}
+
+
+
+~\\ The liquid water terminal velocity is similar to Song and Ogura (1973) description with a mean density adjustement as suggested by Kessler (1969):
+
+\begin{equation}
+V=36349(\rho q_r)^{0.1346}\left(\frac{\rho}{\rho_0}\right)^{-\frac{1}{2}}
+\end{equation}
+
 
 
 \clearpage 
@@ -115,6 +456,9 @@ T_0=0.5(T_E +T_P)
 \end{equation*}
 
 ~\\Earth scalling parameter is used for the baroclinic instability, it initialization doesn't change from non scaled baroclinic instability. However the scalling parameter X as an effect on the the planet radius and it rotation rate. The impact on both of those parameter are the following $a_{ref}=a_{earth}/X$ and $\Omega_{ref}=\Omega{earth}X$ , nevertheless the product of the two is an changed 
+
+
+
 
 
 
