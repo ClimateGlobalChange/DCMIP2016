@@ -1,0 +1,10 @@
+
+*.aux
+
+*.log
+
+*.out
+
+*.gz
+
+DCMIP2016-TestCaseDocument_v1.pdf

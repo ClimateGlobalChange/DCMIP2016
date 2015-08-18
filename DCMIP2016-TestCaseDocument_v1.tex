@@ -1,19 +1,49 @@
-% !TEX encoding = UTF-8 Unicode
+\documentclass[times,doublespace]{fldauth}
 
-\documentclass{article}   
-\usepackage[american]{babel} 
-\usepackage[utf8]{inputenc}  
-\usepackage[T1]{fontenc}
-\usepackage{amssymb,amsmath}
+\usepackage{hyperref}
+\usepackage{lineno}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage{siunitx}
-                    
-\title{Dynamical Core Model Intercomparaison Project (DCMIP) Test Case Interface Documment}                  % Titre du document
-\author{AntoninVerlet-Banide}                          % Auteur
-\date{20/04/2015}                              % Date de création
-\begin{document}                               % Début du document
-\maketitle{}                                   % Génération du titre
 
+\newcommand{\vb}{\mathbf}
+\newcommand{\vg}{\boldsymbol}
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}
+\newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\avg}[1]{\overline{#1}}
+\newcommand{\dblavg}[1]{\overline{\overline{#1}}}
+\newcommand{\mat}[1]{\mathbf{\mathsf{#1}}}
+\newcommand{\arccot}{\mathrm{arccot}}
+
+\newcommand{\rbd}[1]{\raisebox{-1.5ex}[1.5ex]{#1}}
+\newcommand{\rbu}[1]{\raisebox{0.5ex}[-0.5ex]{#1}}
+\newcommand{\rb}[1]{\raisebox{2ex}[-2ex]{#1}}
+
+\newcommand\T{\rule{0pt}{2.6ex}}
+\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
+
+
+\begin{document}
+\setcounter{section}{-1}
+
+\title{Dynamical Core Model Intercomparison Project (DCMIP) \\
+ Test Case Document}
+\author{Antonin Verlet-Banide\\ Paul Aaron Ullrich \\Christiane Jablonowski \\ Kevin Reed \\ Colin Zarzycki \\ Peter Hjort Lauritzen \\ Ramachandran D. Nair \\ \vspace{3cm} DCMIP Summer School: June 2016}
+
+\maketitle
+
+\begin{center}
+Version 0.1 \\
+\today
+\end{center}
+
+\vspace{2cm}
+
+\begin{center}
+Email questions to \textbf{dcmip@ucar.edu}
+\end{center}
+
+\clearpage
 
 \section{Practical Considerations}
 
@@ -121,7 +151,7 @@ $K$ & $3$ & jet width parameter \\
 \end{table}
 
 \clearpage
-\subsection{ Inisialization }
+\subsection{ Initialization }
  ~\\ The tes case is inisialized with a constant surface pressure and with a surface geopotential equal to zero. The meridional wind is initialized as zero and will only be dependent of the velocity filed perturation. 
 
 ~\\Interior term on temperature expression:
@@ -278,7 +308,7 @@ $\epsilon$ & $10^{-25}$ & Small threshold value \\
 \end{table}
 
 
-\subsection{ Inisialization }
+\subsection{ Initialization }
 
 
 ~\\ The background state consists of a prescribed specific humidity profile, virtual temperature and pressure profile.  These parameters are chosen to roughly match an observed tropical sounding documented in \cite{jordan:58}.  The background specific humidity profile $\overline{q}(z)$ as a function of height $z$ is :
@@ -359,11 +389,18 @@ Density:
 \rho=\frac{p}{R_dT(1+0.608q)}
 \end{equation}
 
+\clearpage
+\section{Mesoscale Storm}
+
+{\color{red}Fill in text here}
+
+\clearpage
+\section{Terminator Physics}
+
+{\color{red}Fill in text here}
 
 \clearpage
 \section{Kessler Physics}
-
-Model Equations :
 
 ~\\Pressure equation obey to the following equation, written using the moist equation of state.
 
