@@ -390,9 +390,68 @@ Density:
 \end{equation}
 
 \clearpage
-\section{Mesoscale Storm}
 
-{\color{red}Fill in text here}
+\section{Mesoscale Storm}  \label{sec:3}
+
+~\\ The study of mesoscale storm is the study of storm within a range of horizontal dimension  between 10 to hundreds kilometers. 
+
+~\\The wind velocity, temperature and moisture are analytically defined. Potential temperature and relative humidity at the equator are altitude dependent and are defined by the following equations :
+
+\begin{equation}
+\begin{split}
+\overline{\theta}(z)&=\theta_0 + (\theta_t - \theta_0)\left(\frac{z}{z_t}\right)^{\frac{5}{4}}  \ 0 \leq z \leq z_t \\
+\overline{\theta}(z)&=\theta_t \exp\left(-\frac{g(z-z_t)}{c_pT_{t}}\right) \text{ ~~for   }  z_t \leq z
+\end{split}
+\end{equation}
+
+ \begin{equation}
+\begin{split}
+\overline{H}(z)&=1 + \frac{3}{4}\left(\frac{z}{z_t}\right)^{\frac{5}{4}}  \ 0 \leq z \leq z_t \\
+\overline{H}(z)&= \frac{1}{4} \text{ ~~for   }  z_t \leq z
+\end{split}
+\end{equation}
+
+The saturation mixing ratio $q_{vs}$ is applied to initialize the water vapor ratio defined by $q = \overline{H}(z) q_{vs} $. The saturation mixing ratio equation is describe as :
+
+ \begin{equation}
+q_{vs}=\frac{380}{p}\exp\left(17.27\frac{ T-273}{T-36}\right)
+\end {equation}
+
+The zonal wind velocity equation follow the J.Klemp description as a continuous profile in three equations:
+
+\begin{equation}
+\begin{split}
+\overline{u}(\phi,z)&=\left(U_s\frac{z}{z_t}-U_c\right)\cos(\phi)  \text{ ~~for   } z < z_s-1000 \\
+\overline{u}(\phi,z)&=\left(-\frac{4}{5}+3\frac{z}{z_s}-\frac{5}{4}\frac{z^2}{z_s^2}\right)U_s-U_c \text{ ~~for   }  |z-z_s| \leq 1000 \\
+\overline{u}(\phi,z)&=\left(U_s-U_c\right)\cos(\phi)  \text{ ~~for   } \text{ ~~for   }  z > z_s+1000 
+\end{split}
+\end{equation}
+
+
+
+~\\ At initial condition the hydrostatic balance is requested. It can be written in function of the pressure and the temperature or as followed in terms of the exner function and the virtual potential temperature :
+
+  \begin{equation}
+ \frac{\partial{\Pi}}{\partial z} = - \frac{g}{c_p\theta_v}
+ \end {equation}
+
+
+
+\subsection{potential temperature perturbation}
+
+A termal perturbation is added to the potential temperature field defined as follow
+
+\begin{equation}
+\begin{split}
+\theta_i(\lambda,\phi,z)&=\overline{u}(\phi,z) + \Delta\phi\cos^2\left(\frac{\pi}{2}R_{\phi}\right) \text{ ~~for   } R_{\phi} < 1 \\
+\theta_i(\lambda,\phi,z)&=\overline{u}(\phi,z) \text{ ~~for   } R_{\phi} \geq 1
+\end{split}
+\end{equation}
+
+
+ \begin{equation}
+T=\frac{theta_v}{1+0.61q}\left(\frac{p}{p_0}\right)^{\frac{R_d}{c_p}}
+\end{equation}
 
 \clearpage
 \section{Terminator Physics}
