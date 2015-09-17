@@ -456,7 +456,72 @@ T=\frac{theta_v}{1+0.61q}\left(\frac{p}{p_0}\right)^{\frac{R_d}{c_p}}
 \clearpage
 \section{Terminator Physics}
 
-{\color{red}Fill in text here}
+
+
+
+\section{Toy Chemistry}
+
+The toy chemetry test represent the photolysis-driven condition with the the following equation representing the combination and the dissociation.
+\begin{equation}
+\begin{split}
+X+X&=X_2 \\
+X_2&=X+X \\
+\end{split}
+\end{equation}
+
+\begin{equation}
+X_T=X+2X_2
+\end{equation}
+
+\begin{equation}
+\begin{split}
+\frac{dX}{dt}&=2k_1X_2-2k_2XX \\
+\frac{dX_2}{dt}=-k_1X_2+k_2XX
+\end{split}
+\end{equation}
+
+Therefore we have 
+\begin{equation}
+\frac{X_T}{dt}= \frac{d}{dt}[X+2X_2]=0
+\end{equation}
+
+This implie that $X_T$ is constant, with it value
+
+\begin{equation}
+\begin{split}
+X_T=X(t)+2X_2(t)
+X_T=X(0)+2X_2(0)
+\end{split}
+\end{equation}
+
+Therefor we have
+\begin{equation}
+X_2=\frac{1}{2}(X_T-X(t))
+\end{equation}
+
+The two reaction rate coefficient  $k_1$ and $k_2$, representing the the photolytic breaking of molecule $X_2$ and the recombination. They can be describe as : 
+
+\begin {equation}
+\begin{split}
+k_1(\lambda,\theta)&= max[0,\sin\theta\sin\theta_c+\cos\theta\cos\theta_c
+\cos(\lambda-\lambda_c)] \\
+k_2(\lambda,\theta)&=1
+\end{split}
+\end{equation}
+
+Hence the molar mixing ration of cl will be implemented by :
+
+\begin{equation}
+X=\sqrt{\left(\frac{k_1}{4 k_2}\right)^2+2 X_T \frac{k_1}{4k_2} } - \frac{k_1}{4k_2}
+\end{equation}
+
+As follow $\text{cl}_2$ molar mixing ratio is :
+
+\begin{equation}
+X_2=\frac{1}{2}(_T-X)
+\end{equation}
+
+The tendency for cl and $\text{cl}_2$ is represnted by $ \frac{\partial q}{\partial t}$
 
 \clearpage
 \section{Kessler Physics}
