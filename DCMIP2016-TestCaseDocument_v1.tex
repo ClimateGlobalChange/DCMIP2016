@@ -129,11 +129,32 @@ $R_d$ & Gas constant for dry air & $287.0\ \mbox{J}\ \mbox{kg}^{-1}\ \mbox{K}^{-
 $R_\nu$ & Gas constant for water vapor & $461.5$ J kg$^{-1}$ K$^{-1}$ \\
 $\kappa$ & Ratio of $R_d$ to $c_p$ & $R_d/c_p = 2/7$ \\
 $\varepsilon$ & Ratio of $R_d$ to $R_\nu$ & $R_d/R_\nu \approx 0.622$ \\
+$M_v$ & Constant for virtual temperature conversion & $0.608$ \\
 $\rho_{water}$ & Density of water & 1000 kg m$^{-3}$ \\
 \hline 
 \end{tabular*}
 
 \end{table}
+
+\subsection{Great Circle Distance}
+
+The great circle distance is used throughout the document and is given by
+\begin{equation}
+R(\lambda_1, \varphi_1; \lambda_2, \varphi_2) = a \arccos \left( \sin \varphi_1 \sin \varphi_2 + \cos \varphi_1 \cos \varphi_2 \cos (\lambda_1 - \lambda_2) \right).
+\end{equation}
+
+\subsection{Choice of Prognostic Variables and Equation of State}
+
+It is assumed throughout this document that the moist ideal gas law is satisfied,
+\begin{equation} \label{eq:idealgaslaw}
+p = \rho R_d T_v, 
+\end{equation} where the virtual temperature is defined in terms of the temperature as
+\begin{equation}
+T_v = T (1 + M_v q).
+\end{equation}  The virtual potential temperature is similarly related to the potential temperature via the relationship
+\begin{equation}
+\theta_v = \theta (1 + M_v q).
+\end{equation}
 
 \subsection{Small-Planet Experiments}
 The test case suite makes use of small-planet experiments that have the potential to expose the differences between hydrostatic and non-hydrostatic modeling approaches at reasonable computational cost. In particular, the small-planet setups allow the evaluation of the model behavior with physical grid spacings down to a few hundred meters. In some instances, we suggest small planets with circumferences of about 40 km and a vertical extent of 30 km which raises questions concerning the validity of the shallow-atmosphere approximation. However, since the experiments are not compared to observations, we still ask for the use of the shallow-atmosphere approach to allow for intercomparisons among the DCMIP models and to avoid imbalances of the initial conditions.
@@ -186,176 +207,116 @@ We have also provided a set of stand-alone Fortran routines that compute tendenc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
-\section{Moist Baroclinic Wave Test case}   
+\section{Moist Baroclinic Wave}   
  
-~\\ This baroclinic instability test is being use on 3D atmospheric models instability test evolution.
+This baroclinic instability test of \cite{ullrich2014proposed} considers a reference state in geostrophic and hydrostatic balance that satisfies the conditions for baroclinic instability.  Although a perfect model should be able to maintain this state indefinitely, small truncation errors associated with numerical inaccuracies and grid structure will trigger the development of the wave modes associated with baroclinic development.  To control the development of the baroclinic wave, a small perturbation (but one which is large compared with machine truncation) is added to the flow so as to trigger the development of a wave over a period of approximately 10 days.  A moist variant of the dry dynamical test of \cite{ullrich2014proposed} is considered here so as to understand the impact of moisture feedbacks on the development of the wave.
 
+This test case is similar in character to the test of \cite{jablonowski2006baroclinic}, but has a number of key differences:  (1) this test is an analytical solution of the equations of motion in height ($z$) coordinates, (2) the bottom topography is zero throughout the domain, (3) the new test case does not have a distinct stratosphere (the presence of a stratosphere is largely irrelevant for understanding baroclinic development), and (4) the velocity field goes to zero at the model surface.
  
 \begin{table}[h]
 
-\caption{List of constants used for the Baroclinic Instability test cases (Test $4-x$).}
+\caption{List of constants used for the Moist Baroclinic Wave test case}
 \label{test4:tab}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
 \hline Constant & Value & Description \\
 \hline 
 $z_{\tiny \mbox{top}}$ & $44000\ \mbox{m}$ & Recommended height position of the model top \\
 $p_{\tiny \mbox{top}}$ & $\approx 2.26$ hPa & Recommended pressure at the model top\\
-$X$ & various & Reduced-size planet scaling factor, see below\\
+$X$ & $1$ & Reduced-size planet scaling factor, see below\\
 $a$ & $a_{\tiny \mbox{ref}}/X$ & Scaled radius of the Earth \\
-$Z_r$ & $(z+a)/a$ & Radius Ratio\\
+%$Z_r$ & $1$ & Shallow atmosphere parameter \\
+%$Z_r$ & $(z+a)/a$ & Radius Ratio\\
 $\Omega$ & $\Omega_{\tiny \mbox{ref}}X$ & Scaled angular speed of the Earth \\
 $p_s$ & $1000\ \mbox{hPa}$ & Surface pressure (constant) \\
 $p_0$ & $1000\ \mbox{hPa}$ & Reference pressure (constant) \\
-$\eta_0$ & $0.252$ & Value of $\eta$ at a reference level (position of the jet)\\
-$\eta_t$ & $0.2$ & Value of $\eta$ at the tropopause \\
-$\eta_s$ & $1$ & Value of $\eta$ at the surface \\
 $u_0$ & $35\ \mbox{m\ s}^{-1}$ & Maximum amplitude of the zonal wind \\
 $u_p$ & $1\ \mbox{m\ s}^{-1}$ & Maximum amplitude of the zonal wind perturbation \\
-$\lambda_c$ & $\pi / 9$ & Longitude of the zonal wind perturbation centerpoint (20$^\circ$ E)\\
-$\varphi_c$ & $2 \pi / 9$ & Latitude of the zonal wind perturbation centerpoint (40$^\circ$ N)\\
-$R$ & $a / 10$ & Radius of the zonal wind perturbation \\
+$z_p$ & $15000\ \mbox{m}$ & Maximum height of the zonal wind perturbation \\
+$\lambda_p$ & $\pi / 9$ & Longitude of the zonal wind perturbation centerpoint (20$^\circ$ E)\\
+$\varphi_p$ & $2 \pi / 9$ & Latitude of the zonal wind perturbation centerpoint (40$^\circ$ N)\\
+$R_p$ & $a / 10$ & Radius of the zonal wind perturbation \\
 $T_0$ & $288\ \mbox{K}$ & Horizontal-mean temperature at the surface \\
 $T_p$ & $240 \ \mbox{K}$ & Temperature at the polar surface\\
+%$T_E$ & $310 \ \mbox{K}$ & Temperature at the equator\\
 $\Gamma$ & $0.005\ \mbox{K\ m}^{-1}$ & Temperature lapse rate \\
 $\Delta T$ & $4.8 \times 10^{5}\ \mbox{K}$ & Empirical temperature difference \\
 $K$ & $3$ & Jet width parameter \\
-\hline 
-\end{tabular*}
-
-\end{table}
-
-\clearpage
-\subsection{ Initialization }
- ~\\ The tes case is inisialized with a constant surface pressure and with a surface geopotential equal to zero. The meridional wind is initialized as zero and will only be dependent of the velocity filed perturation. 
-
-~\\Interior term on temperature expression:
-
-\begin{equation*}
-I_{T}=(Z_r\cos(\varphi))^K-\frac{K}{K+2}(Z_r\cos(\varphi))^{K+2}
-\end{equation*}
-
-~\\ As mention it is a presured and height based model.  The temperature equation is rules by:
-
-
-
-\begin{equation*}
-T_v=\frac{1}{Z_r^2(\tau_1-\tau_2 I_T)} 
-\label{virtTemp}
-\end{equation*}
-
-
-~\\ With $\tau_1$ and $\tau_2$ define as follow
-\begin{equation*}
-\tau_1=\frac{1}{T_0\exp\left(\text{lapse}\frac{z}{T_0}\right)} + \frac{T_0-T_p}{T_0T_p}\left(1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
-\end{equation*}
-
-
-
-\begin{equation*}
-\tau_2=0.5(K-2)\frac{T_0-T_p}{T_0T_p}\left(1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
-\end{equation*}
-
-
-~\\ The pressure follow an hydrostatic rule define as :
-\begin{equation}
-p=p_0\exp(-\frac{g}{Rd}(\tau_{\text{int}_1}-\tau_{\text{int}_2}I_T))
-\end{equation}
-
-~\\with $\tau_{\text{int}_1}$ and $\tau_{\text{int}_2}$ define as
-\begin{equation*}
-\tau_{\text{int}_1}=\frac{\exp\left( \text{lapse}\frac{z}{T_0} \right)-1}{\text{lapse}}+z\frac{T_0-T_p}{T_0T_p}\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
-\end{equation*}
-\begin{equation*}
-\tau_{\text{int}_2}=0.5(K-2)\frac{T_0-T_p}{T_0T_p}z\exp\left(-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right)
-\end{equation*}
-
-\clearpage
-
-
-~\\ The zonal velocity follow the following equation.  
-\begin{equation}
- u=-\Omega_{ref} a_{ref} cos(\varphi)+\sqrt{(\Omega_{ref} a_{ref} cos(\varphi))^2+ a_{ref} \cos(\varphi)U)}
-\end{equation}
-
-A perturbation equation is applied to the velocity field. Depending of the model use stream fonction perturbation or exponential perturbation are applied on the the velocity field. A meridional velocity is noticed for stream function perturbation since it affect both zonal and meridional velocity field.
-
-
-
-
-
- 
-\subsection{Perturbations}
-
-\begin{table}[h]
-
-\caption{List of additional constants used for the Moist Baroclinic Instability test cases (Test $4-2$), see also Table \ref{test4:tab}.}
-\label{test42:tab}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
-\hline Constant & Value & Description \\
-\hline 
-$X$ & $1$ & small-planet scaling factor (regular-size Earth)\\
 $\varphi_w$ & $2 \pi / 9$ & Specific humidity latitudinal width parameter $(40^\circ)$\\
 $p_w$ & $340\ \mbox{hPa}$ & Specific humidity vertical pressure width parameter \\
-$q_0$ & $0.021$ kg/kg& Maximum specific humidity amplitude \\
-$p_0$ & $1000$ hPa& Surface pressure \\
+$q_0$ & $0.018$ kg/kg& Maximum specific humidity amplitude \\
+$q_t$ & $1.0 \times 10^{-12}$ kg/kg & Specific humidity above artificial tropopause \\
+$p_t$ & $10000\ \mbox{hPa}$ & Pressure at artificial tropopause \\  
 \hline 
 \end{tabular*}
 
 \end{table}
 
-\subsubsection*{Moist initial conditions}
-The initial conditions for the moist baroclinic wave are almost identical to the initial conditions for the dry baroclinic wave. We utilize the regular-size planet with the scaling factor $X=1$. The differences to the dry baroclinic wave test case 4-1 are that the original temperature equation $T$ now gets interpreted as an equation for the virtual temperature $T_v$, the formally dry surface pressure $p_s = p_0$ gets interpreted as the surface pressure of the moist air, the definition of the density needs to utilize the virtual temperature instead of the temperature, and an analytic equation for the specific humidity $q$ is added. The wind initialization of the moist baroclinic wave is identical to the dry case. No passive tracers $q_1$  or $q_2$ are specified.
+\subsection{Reference State}
 
-The specific humidity field is 
-\begin{eqnarray}
-q(\lambda, \varphi, \eta) &=& q_0 \exp\Bigg[- \Big(\frac{\varphi}{\varphi_{w}}\Big)^4 \Bigg] \exp\Bigg[- \Bigg(\frac{(\eta-1)p_0}{p_{w}}\Bigg)^2  \Bigg]
-\end{eqnarray}
-with the latitudinal width parameter $\varphi_{w} = 2 \pi / 9$ (corresponding to $40^\circ$ latitude) and the pressure-based width parameter $p_w = 340$ hPa. Since the surface pressure of the moist air $p_s$ is constant with $p_s = p_0 = 1000$ hPa  the vertical coordinate $\eta$ is represented by $\eta = p/p_0$. The functional form of $q$ and its parameters were inspired by observations. This moisture fields leads to maximum relative humidities around 90\% in the lower levels of the midlatitudes, and around 70\% in the topics.
+This section describes the analytical form of the reference state for the baroclinic wave.  The test case is initialized with a constant surface pressure and with a surface geopotential equal to zero.  The meridional wind in the reference state is zero. 
 
-This virtual temperature $T_v$ field is given by the original temperature definition in (\ref{virtTemp}),
-
-The density of the moist air is defined by the ideal gas law
-\begin{equation} \label{eq:density_test4m}
-\rho(\lambda, \varphi, \eta) = \frac{p(\lambda, \varphi, \eta)}{R_d \,T_v(\lambda, \varphi, \eta)}.
+In the reference state, the virtual temperature is given by
+\begin{equation}
+T_v(\varphi, z) = \frac{1}{\tau_1(z)-\tau_2(z) I_T(\varphi)},
+\label{virtTemp}
+\end{equation} where $I_T(\varphi)$ is defined as
+\begin{equation}
+I_{T}(\varphi) =(\cos \varphi )^K-\frac{K}{K+2}(\cos \varphi )^{K+2},
+\end{equation} and $\tau_1(z)$ and $\tau_2(z)$ are defined as follows:
+\begin{align}
+\tau_1(z) &= \frac{1}{T_0\exp\left(\frac{\Gamma z}{T_0}\right)} + \left( \frac{T_0-T_p}{T_0T_p} \right)\left[1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \\
+\tau_2(z) &= \frac{(K-2)}{2} \left( \frac{T_0-T_p}{T_0T_p} \right) \left[1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right].
+\end{align}  To maintain hydrostatic balance, the pressure is given by:
+\begin{equation}
+p(\varphi, z) = p_0\exp \left[ -\frac{g}{Rd}(\tau_{\text{int}_1}(z) -\tau_{\text{int}_2}(z) I_T(\varphi) ) \right]
+\end{equation} with $\tau_{\text{int}_1}(z)$ and $\tau_{\text{int}_2}(z)$ given by
+\begin{align}
+\tau_{\text{int}_1}(z) &=\frac{\exp\left( \frac{\Gamma z}{T_0} \right)-1}{\Gamma} + z \left(\frac{T_0-T_p}{T_0T_p} \right) \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \\
+\tau_{\text{int}_2}(z) &=\frac{(K-2)}{2} \left(\frac{T_0-T_p}{T_0T_p} \right) z \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right].
+\end{align}  If density is a prognostic variable, it can be obtained from $p$, $T_v$ and the ideal gas law (\ref{eq:idealgaslaw}).  Finally, the zonal velocity is
+\begin{equation}
+u_{\text{ref}}(\varphi, z) = -\Omega_{\text{ref}} a_{\text{ref}} \cos(\varphi)+\sqrt{(\Omega_{\text{ref}} a_{\text{ref}} \cos(\varphi))^2+ a_{\text{ref}} \cos(\varphi)U(z,\varphi))},
+\end{equation} where
+\begin{equation}
+U(z, \varphi) = \frac{g K}{a_{\text{ref}}} \tau_{\text{int}_2}(z) \left[ (\cos \varphi)^{K - 1} - (\cos \varphi)^{K + 1} \right] T_v(\varphi, z).
 \end{equation} 
-and utilizes the pressure of the moist air and the virtual temperature.
 
-The formulation of the virtual temperature and specific humidity leads to the analytic representation of the temperature
+\subsection{Perturbations}
+
+To trigger the development of the baroclinic wave, a perturbation is applied to the zonal velocity field that takes the form of a simple exponential bell with a vertical taper:
 \begin{equation}
-\label{test42:T}
-T(\lambda,\varphi,\eta) = \frac{T_v(\lambda,\varphi,\eta)}{1+0.608 \,q(\lambda, \varphi, \eta)}
-\end{equation}
-This temperature is colder than the original dry temperature. However, note that in the moist case the virtual temperature and moist pressure determine the strength of the pressure gradient term in the momentum equations. Since these are identical to the temperature and pressure in the dry case, the forcing by the pressure gradient term is the same in both the dry and moist variant of the baroclinic wave. The moist variant of the baroclinic wave without the temperature forcing from large-scale condensation should lead to almost identical results when compared to the dry version. Very small variations are expected since the moisture gets independently transported as a passive tracer in this case and some models utilize the moist variant of the physical constant $c_p$. If possible, the dry $c_p$ should be used. Comparing the evolution of the dry baroclinic wave to its moist variant (without large-scale condensation) can serve as a first sensibility check.
-
-
-
+u^\prime(\lambda, \varphi, z) = \left\{ \begin{array}{ll} \displaystyle u_p Z_p(z)  \exp \left[ - \left( \frac{R(\lambda, \varphi; \lambda_p, \varphi_p)}{R_p} \right)^2 \right], & \mbox{if $R(\lambda, \varphi; \lambda_p, \varphi_p) < R_p$,} \\ 0, & \mbox{otherwise,} \end{array} \right.
+\end{equation} where
 \begin{equation}
- q_{numb}=q_{ratio}q_{gc}\frac{P_{sv}}{p}\left[1-\frac{L_{vap}}{R_{vap}}\frac{\rho R_d}{p} + \frac{L_{vap}}{R_{vap} T_{ref}} \right]
-\end{equation}
-
+Z_p(z) = \left\{ \begin{array}{ll} \displaystyle 1 - 3 \left( \frac{z}{z_p} \right)^2 + 2 \left( \frac{z}{z_p} \right)^3, & \mbox{if $z \leq z_p$,} \\ 0, & \mbox{otherwise.} \end{array} \right.
+\end{equation}  Consequently, the perturbed velocity field takes the form
 \begin{equation}
- q_{den}=\left[1+\frac{q_{ratio}q_{gc}P_{sv}}{p^2}\rho R_d M_{vap} \right]
+u(\lambda, \varphi, z) = u_{\text{ref}}(\varphi, z) + u^\prime(\lambda, \varphi, z).
 \end{equation}
 
+\subsection{Moist initial conditions}
+
+We define the vertical $\eta$ coordinate as
 \begin{equation}
- q=q_{num}/q_{den}
-\end{equation}
+\eta(\lambda, \varphi, z) = p(\lambda, \varphi, z) / p_s.
+\end{equation}  Since the surface pressure of the moist air $p_s$ is constant with $p_s = p_0 = 1000$ hPa  the vertical coordinate $\eta$ is represented by $\eta = p/p_0$.  Specific humidity is specified in terms of $\eta$ as
+\begin{eqnarray}
+q(\lambda, \varphi, \eta) &=& \left\{ \begin{array}{ll} \displaystyle q_0 \exp\Bigg[- \Big(\frac{\varphi}{\varphi_{w}}\Big)^4 \Bigg] \exp\Bigg[- \Bigg(\frac{(\eta-1)p_0}{p_{w}}\Bigg)^2  \Bigg], & \mbox{if $\eta > p_t / p_s$,} \\ q_{t}, & \mbox{otherwise.} \end{array} \right.
+\end{eqnarray} The functional form of $q$ and its parameters were inspired by observations. This moisture fields leads to maximum relative humidities around 85\% in the lower levels of the midlatitudes.
 
-Great circle perturbation \\
-\begin{equation*}
-\text{Circle}_{\text{great}}=\frac{1}{\text{Pert}_{\text{expr}}}\text{arcos}(\sin(\text{Pert}_{\text{lat}}))\sin(\text{lat})+\cos(\text{Pert}_{\text{lat}})\cos(\text{lat})\cos(\text{lon}-\text{Pert}_{\text{lon}})
-\end{equation*}
+Note that the moist temperature is colder than the temperature one would obtain with $q = 0$. However, note that in the moist case the virtual temperature and moist pressure determine the strength of the pressure gradient term in the momentum equations. Since these are identical to the temperature and pressure in the dry case, the forcing by the pressure gradient term is the same in both the dry and moist variant of the baroclinic wave. The moist variant of the baroclinic wave without the temperature forcing from large-scale condensation should lead to almost identical results when compared to the dry version. Very small variations are expected since the moisture gets independently transported as a passive tracer in this case and some models utilize the moist variant of the physical constant $c_p$. If possible, the dry $c_p$ should be used. Comparing the evolution of the dry baroclinic wave to its moist variant (without large-scale condensation) can serve as a first sensibility check.
 
+\subsection{Grid spacings, simulation time, output and diagnostics}
 
-\clearpage 
-
-
+\clearpage
 
 \section{Tropical cyclone}
 
+The simplified tropical cyclone test case on a regular-size Earth is based on the work of \cite{reed2012idealized, reed2011analytic,reed2011impact, reed2011assessing}.  In this test an analytic vortex is initialized in a background environment which is tractable to a rapid intensification of tropical cyclones.  
+
 \begin{table}[h]
 
-\caption{List of constants used for the Simplified Tropical Cyclone Experiments (Tests 5-1 and 5-2)}
+\caption{List of constants used for the Ideaized Tropical Cyclone test}
 
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
 \hline Constant & Value & Description \\
@@ -381,11 +342,9 @@ $\epsilon$ & $10^{-25}$ & Small threshold value \\
 
 \end{table}
 
+\subsection{Initialization}
 
-\subsection{ Initialization }
-
-
-~\\ The background state consists of a prescribed specific humidity profile, virtual temperature and pressure profile.  These parameters are chosen to roughly match an observed tropical sounding documented in \cite{jordan:58}.  The background specific humidity profile $\overline{q}(z)$ as a function of height $z$ is :
+The background state consists of a prescribed specific humidity profile, virtual temperature and pressure profile.  The initial profile is defined to be in approximate gradient wind balance.  The vertical sounding is chosen to roughly match an observed tropical sounding documented in \cite{jordan1958mean}.  The background specific humidity profile $\overline{q}(z)$ as a function of height $z$ is :
 
 \begin{equation}
 \begin{split}
@@ -394,8 +353,7 @@ $\epsilon$ & $10^{-25}$ & Small threshold value \\
 \end{split}
 \end{equation}
 
-
-~\\The background virtual temperature sounding $\overline{T}_v(z)$ is split into two different representations for the lower and upper atmosphere.  It is given by
+The background virtual temperature sounding $\overline{T}_v(z)$ is split into two different representations for the lower and upper atmosphere.  It is given by
 \begin{equation}
 \begin{array}{ll} \label{eq2}
 %\phantom{T_{vt} = }\overline{T}_v(z) = T_{v0} - \Gamma z & \mbox{for} \; 0 \le z \le z_t, \\
@@ -409,15 +367,13 @@ $\epsilon$ & $10^{-25}$ & Small threshold value \\
 \end{eqnarray}
 
 
-~\\ Surface pressure:
+Surface pressure is approximately constant away from the tropical cyclone, but drops as the storm is approached:
 \begin{equation}
-p_s=p_0-\delta p \exp\left(-\frac{r_g}{r_p}^{n_r}\right)
-\label{eqps}
+p_s=p_0 - \delta p \exp\left(-\frac{r_g}{r_p}^{n_r}\right)
+\label{eq:tropical_cyclone_ps}
 \end{equation}
 
-The background vertical pressure profile $\overline{p}(z)$ of the moist air is computed using the hydrostatic balance and the surface pressure equation (\ref{eqps}). The profile is given by:
-
-
+The background vertical pressure profile $\overline{p}(z)$ of the moist air is computed using the hydrostatic balance and the surface pressure equation (\ref{eq:tropical_cyclone_ps}). The profile is given by:
 \begin{equation}
 \begin{split}
 \overline{p}(z)&=p_s \exp\left(-\left(\frac{z}{zp}\right)^{2}\right)\left(\frac{T_0-\gamma z}{T_0}\right)^{\frac{g}{R_d\gamma}} \text{ ~~for   } 0 \leq z \leq z_t \\
@@ -425,20 +381,12 @@ The background vertical pressure profile $\overline{p}(z)$ of the moist air is c
 \end{split}
 \end{equation}
 
+\subsection{Axisymmetric Vortex}
 
-
-\subsection*{Axisymmetric Vortex}
-
-The axisymmetric virtual temperature $T_v(r,z)$ is computed using the hydrostatic equation and ideal gas law
-
-
-\begin{equation}
-T_v(r,z) = -\frac{g p(r,z)}{R_d} \left( \frac{\partial p(r,z)}{ \partial z} \right)^{-1}.
-\end{equation}  Again it can be written as a sum of the background state and a perturbation,
+The axisymmetric virtual temperature $T_v(r,z)$ is computed using the hydrostatic equation and ideal gas law (\ref{eq:idealgaslaw}).  Again it can be written as a sum of the background state and a perturbation,
 \begin{equation} \label{eq:virt_temp}
 T_v(r,z) = \overline{T}_v(z) + T_v^\prime(r,z),
 \end{equation} where the virtual temperature perturbation is defined as
-
 
 \begin{equation}
 \begin{split}
@@ -452,15 +400,6 @@ T_v(r,z) = \overline{T}_v(z) + T_v^\prime(r,z),
 ~\\Height equation:
 \begin{equation}
 z=\frac{T_0}{\Gamma}\left(1-\left(\frac{p}{p_s}\right) ^{\frac{R_d\Gamma}{g}}\right)
-\end{equation}
-
-
-
-
-Density:
-
-\begin{equation}
-\rho=\frac{p}{R_dT(1+0.608q)}
 \end{equation}
 
 \clearpage
