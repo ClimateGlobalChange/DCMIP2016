@@ -149,7 +149,7 @@ It is assumed throughout this document that the moist ideal gas law is satisfied
 \begin{equation} \label{eq:idealgaslaw}
 p = \rho R_d T_v, 
 \end{equation} where the virtual temperature is defined in terms of the temperature as
-\begin{equation}
+\begin{equation} \label{eq:virtualtemperature}
 T_v = T (1 + M_v q).
 \end{equation}  The virtual potential temperature is similarly related to the potential temperature via the relationship
 \begin{equation}
@@ -224,19 +224,19 @@ $z_{\tiny \mbox{top}}$ & $44000\ \mbox{m}$ & Recommended height position of the 
 $p_{\tiny \mbox{top}}$ & $\approx 2.26$ hPa & Recommended pressure at the model top\\
 $X$ & $1$ & Reduced-size planet scaling factor, see below\\
 $a$ & $a_{\tiny \mbox{ref}}/X$ & Scaled radius of the Earth \\
-%$Z_r$ & $1$ & Shallow atmosphere parameter \\
-%$Z_r$ & $(z+a)/a$ & Radius Ratio\\
 $\Omega$ & $\Omega_{\tiny \mbox{ref}}X$ & Scaled angular speed of the Earth \\
 $p_s$ & $1000\ \mbox{hPa}$ & Surface pressure (constant) \\
 $p_0$ & $1000\ \mbox{hPa}$ & Reference pressure (constant) \\
 $u_0$ & $35\ \mbox{m\ s}^{-1}$ & Maximum amplitude of the zonal wind \\
+$b$ & $2$ & Half-width parameter \\
+$K$ & $3$ & Power used for temperature field \\
+$T_E$ & $310\ \mbox{K}$ & Horizontal-mean temperature at the surface \\
+$T_P$ & $240 \ \mbox{K}$ & Temperature at the polar surface\\
 $u_p$ & $1\ \mbox{m\ s}^{-1}$ & Maximum amplitude of the zonal wind perturbation \\
 $z_p$ & $15000\ \mbox{m}$ & Maximum height of the zonal wind perturbation \\
 $\lambda_p$ & $\pi / 9$ & Longitude of the zonal wind perturbation centerpoint (20$^\circ$ E)\\
 $\varphi_p$ & $2 \pi / 9$ & Latitude of the zonal wind perturbation centerpoint (40$^\circ$ N)\\
 $R_p$ & $a / 10$ & Radius of the zonal wind perturbation \\
-$T_0$ & $288\ \mbox{K}$ & Horizontal-mean temperature at the surface \\
-$T_p$ & $240 \ \mbox{K}$ & Temperature at the polar surface\\
 %$T_E$ & $310 \ \mbox{K}$ & Temperature at the equator\\
 $\Gamma$ & $0.005\ \mbox{K\ m}^{-1}$ & Temperature lapse rate \\
 $\Delta T$ & $4.8 \times 10^{5}\ \mbox{K}$ & Empirical temperature difference \\
@@ -253,7 +253,7 @@ $p_t$ & $10000\ \mbox{hPa}$ & Pressure at artificial tropopause \\
 
 \subsection{Reference State}
 
-This section describes the analytical form of the reference state for the baroclinic wave.  The test case is initialized with a constant surface pressure and with a surface geopotential equal to zero.  The meridional wind in the reference state is zero. 
+This section describes the analytical form of the reference state for the baroclinic wave.  The test case is initialized with a constant surface pressure and with a surface geopotential equal to zero.  The meridional wind in the reference state is zero.
 
 In the reference state, the virtual temperature is given by
 \begin{equation}
@@ -264,15 +264,15 @@ T_v(\varphi, z) = \frac{1}{\tau_1(z)-\tau_2(z) I_T(\varphi)},
 I_{T}(\varphi) =(\cos \varphi )^K-\frac{K}{K+2}(\cos \varphi )^{K+2},
 \end{equation} and $\tau_1(z)$ and $\tau_2(z)$ are defined as follows:
 \begin{align}
-\tau_1(z) &= \frac{1}{T_0\exp\left(\frac{\Gamma z}{T_0}\right)} + \left( \frac{T_0-T_p}{T_0T_p} \right)\left[1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \\
-\tau_2(z) &= \frac{(K-2)}{2} \left( \frac{T_0-T_p}{T_0T_p} \right) \left[1-2\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right].
-\end{align}  To maintain hydrostatic balance, the pressure is given by:
+\tau_1(z) &= \frac{1}{T_0} \exp\left(\frac{\Gamma z}{T_0}\right) + \left( \frac{T_0-T_P}{T_0T_P} \right)\left[1-2\left(\frac{z g}{b R_d T_0}\right)^2\right] \exp\left[-\left(\frac{z g}{b R_d T_0}\right)^2\right] \\
+\tau_2(z) &= \frac{(K + 2)}{2} \left( \frac{T_E-T_P}{T_E T_P} \right) \left[1-2\left(\frac{z g}{b R_d T_0}\right)^2\right] \exp\left[-\left(\frac{z g}{b R_d T_0}\right)^2\right],
+\end{align} with $T_0 = \tfrac{1}{2} (T_E - T_P)$.  To maintain hydrostatic balance, the pressure is given by:
 \begin{equation}
-p(\varphi, z) = p_0\exp \left[ -\frac{g}{Rd}(\tau_{\text{int}_1}(z) -\tau_{\text{int}_2}(z) I_T(\varphi) ) \right]
-\end{equation} with $\tau_{\text{int}_1}(z)$ and $\tau_{\text{int}_2}(z)$ given by
+p(\varphi, z) = p_0\exp \left[ -\frac{g}{Rd}(\tau_{\text{int},1}(z) -\tau_{\text{int},2}(z) I_T(\varphi) ) \right]
+\end{equation} with $\tau_{\text{int},1}(z)$ and $\tau_{\text{int},2}(z)$ given by
 \begin{align}
-\tau_{\text{int}_1}(z) &=\frac{\exp\left( \frac{\Gamma z}{T_0} \right)-1}{\Gamma} + z \left(\frac{T_0-T_p}{T_0T_p} \right) \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right] \\
-\tau_{\text{int}_2}(z) &=\frac{(K-2)}{2} \left(\frac{T_0-T_p}{T_0T_p} \right) z \exp\left[-\left(\frac{zT_pg}{(T_0-T_p)R_d}\right)^2\right].
+\tau_{\text{int},1}(z) &=\frac{1}{\Gamma} \left[ \exp\left( \frac{\Gamma z}{T_0} \right)-1 \right] + z \left(\frac{T_0-T_P}{T_0T_P} \right) \exp\left[-\left(\frac{z g}{b R_d T_0}\right)^2\right] \\
+\tau_{\text{int},2}(z) &=\frac{(K+2)}{2} \left(\frac{T_E-T_P}{T_E T_P} \right) z \exp\left[-\left(\frac{z g}{b R_d T_0}\right)^2\right].
 \end{align}  If density is a prognostic variable, it can be obtained from $p$, $T_v$ and the ideal gas law (\ref{eq:idealgaslaw}).  Finally, the zonal velocity is
 \begin{equation}
 u_{\text{ref}}(\varphi, z) = -\Omega_{\text{ref}} a_{\text{ref}} \cos(\varphi)+\sqrt{(\Omega_{\text{ref}} a_{\text{ref}} \cos(\varphi))^2+ a_{\text{ref}} \cos(\varphi)U(z,\varphi))},
@@ -308,9 +308,16 @@ Note that the moist temperature is colder than the temperature one would obtain 
 
 \subsection{Grid spacings, simulation time, output and diagnostics}
 
+\begin{itemize}
+\item Reference simulations (dry and moist) should be performed at 1$^\circ$ resolution with 30 vertical levels for 15 days.  Plots should be produced for the moist simulation and the anomaly between moist and dry simulations at day 9, 12 and 15.
+\item Plots of minimum surface pressure over the duration of the simulation for both dry and moist configurations.
+\item Experiments could address the coupling frequency between the dynamics and physics.
+\item A variable resolution simulation should be performed that (a) studies the effect of the baroclinic wave transitioning from coarse resolution to fine resolution and (b) studies the effect of enhanced resolution near the front.
+\end{itemize}
+
 \clearpage
 
-\section{Tropical cyclone}
+\section{Tropical cyclone} \label{sec:tropical_cyclone}
 
 The simplified tropical cyclone test case on a regular-size Earth is based on the work of \cite{reed2012idealized, reed2011analytic,reed2011impact, reed2011assessing}.  In this test an analytic vortex is initialized in a background environment which is tractable to a rapid intensification of tropical cyclones.  
 
@@ -331,8 +338,8 @@ $z_{q1}$ & $3000$ m & Height related to the linear decrease of $q$ with height \
 $z_{q2}$ & $8000$ m & Height related to the quadratic decrease of $q$ with height \\
 $\Gamma$ & $0.007$\ K\ m$^{-1}$ & Virtual temperature lapse rate \\
 $p_{b}$ & $1015$ hPa & Background surface pressure \\
-$\varphi_c$ & $\pi / 18$ & Initial latitude of vortex center \\
-$\lambda_c$ & $\pi$ & Initial longitude of vortex center \\
+$\varphi_c$ & $\pi / 18$ & Initial latitude of vortex center (radians) \\
+$\lambda_c$ & $\pi$ & Initial longitude of vortex center (radians) \\
 $\Delta p$ & $11.15$ hPa & Pressure perturbation at vortex center \\
 $r_p$ & $282000$ m & Horizontal half-width of pressure perturbation \\
 $z_p$ & $7000$ m & Height related to the vertical decay rate of $p$ perturbation \\
@@ -344,67 +351,124 @@ $\epsilon$ & $10^{-25}$ & Small threshold value \\
 
 \subsection{Initialization}
 
-The background state consists of a prescribed specific humidity profile, virtual temperature and pressure profile.  The initial profile is defined to be in approximate gradient wind balance.  The vertical sounding is chosen to roughly match an observed tropical sounding documented in \cite{jordan1958mean}.  The background specific humidity profile $\overline{q}(z)$ as a function of height $z$ is :
+The background state consists of a prescribed specific humidity profile, virtual temperature and pressure profile.  The initial profile is defined to be in approximate gradient wind balance.  The vertical sounding is chosen to roughly match an observed tropical sounding documented in \cite{jordan1958mean}.  The background specific humidity profile $\overline{q}(z)$ as a function of height $z$ is
 
 \begin{equation}
 \begin{split}
-\overline{q}(z)&=q_0 \exp\left(\frac{-z}{z_{q1}}\right)\exp\left(-\left(\frac{z}{z_{q2}}\right)^2\right) \text{ ~~for   } 0 \leq z \leq z_t \\
+\overline{q}(z)&=q_0 \exp\left(- \frac{z}{z_{q1}}\right)\exp\left[-\left(\frac{z}{z_{q2}}\right)^2\right] \text{ ~~for   } 0 \leq z \leq z_t \\
 \overline{q}(z)&=q_t  \text{ ~~for   }  z_t \leq z
 \end{split}
 \end{equation}
 
 The background virtual temperature sounding $\overline{T}_v(z)$ is split into two different representations for the lower and upper atmosphere.  It is given by
 \begin{equation}
-\begin{array}{ll} \label{eq2}
+\begin{array}{ll} \label{eq:tc_virtualtemperaturebg}
 %\phantom{T_{vt} = }\overline{T}_v(z) = T_{v0} - \Gamma z & \mbox{for} \; 0 \le z \le z_t, \\
 \overline{T}_v(z) = T_{v0} - \Gamma z & \mbox{for} \; 0 \le z \le z_t, \\
 \overline{T}_v(z) = T_{vt} = T_{v0} - \Gamma z_t & \mbox{for} \; z_t < z, 
 \end{array}
-\end{equation}
-~\\with the virtual temperature at the surface $T_{v0}$ = $T_0 (1+0.608 \, q_0)$ and the virtual temperature at the tropopause level $T_{vt}$ = $T_{v0} - \Gamma z_t$.  As a result, the background temperature profile $\overline{T}(z)$ is
-\begin{eqnarray} \label{eq3}
-\overline{T}(z) = \frac{\overline{T}_v(z)}{1 + 0.608\ \overline{q}(z)}.
-\end{eqnarray}
+\end{equation} with the virtual temperature at the surface $T_{v0}$ = $T_0 (1+0.608 \, q_0)$ and the virtual temperature at the tropopause level $T_{vt}$ = $T_{v0} - \Gamma z_t$.  The background temperature profile can be obtained from (\ref{eq:virtualtemperature}).
 
-
-Surface pressure is approximately constant away from the tropical cyclone, but drops as the storm is approached:
+The background vertical pressure profile $\overline{p}(z)$ of the moist air is computed using the hydrostatic balance and (\ref{eq:tc_virtualtemperaturebg}). The profile is given by:
 \begin{equation}
-p_s=p_0 - \delta p \exp\left(-\frac{r_g}{r_p}^{n_r}\right)
-\label{eq:tropical_cyclone_ps}
+\begin{array}{ll}\label{eq4}
+\displaystyle \overline{p}(z) = p_b \left( \frac{T_{v0} - \Gamma z}{T_{v0}} \right )^{g / R_d \Gamma} & \mbox{for} \; 0 \le z \le z_t, \\
+\displaystyle \overline{p}(z) = p_t \, \exp{\left(\frac{g (z_t - z)}{R_d T_{vt}} \right)} & \mbox{for} \; z_t < z.
+\end{array}
+\end{equation}  The pressure at the tropopause level $z_t$ is continuous and given by 
+\begin{equation}\label{eq4.5}
+p_t = p_b \left( \frac{T_{vt}}{T_{v0}} \right )^{\frac{g}{R_d \Gamma}},
 \end{equation}
+which, for the given set of parameters, is approximately 130.5 hPa. 
 
-The background vertical pressure profile $\overline{p}(z)$ of the moist air is computed using the hydrostatic balance and the surface pressure equation (\ref{eq:tropical_cyclone_ps}). The profile is given by:
+\subsubsection{Axisymmetric Vortex}
+
+The pressure equation $p(r,z)$ for the moist air is comprised of the background pressure profile (\ref{eq4}) plus a 2D pressure perturbation $p'(r,z)$,
+\begin{equation} \label{eq5}
+p(r,z) = \overline{p}(z) + p^\prime(r,z),
+\end{equation} where $r$ symbolizes the radial distance (or radius) to the center of the prescribed vortex.  On the sphere $r$ is defined using the great circle distance
 \begin{equation}
-\begin{split}
-\overline{p}(z)&=p_s \exp\left(-\left(\frac{z}{zp}\right)^{2}\right)\left(\frac{T_0-\gamma z}{T_0}\right)^{\frac{g}{R_d\gamma}} \text{ ~~for   } 0 \leq z \leq z_t \\
-\overline{p}(z)&=p_t \exp\left(-\frac{g(z_t-z)}{R_dT_{vt}}\right) \text{ ~~for   }  z_t \leq z
-\end{split}
+r = a \arccos{ \left ( \sin{\varphi_c} \, \sin{\varphi} + \cos{\varphi_c} \, \cos{\varphi} \, \cos{(\lambda - \lambda_c)} \right )}.
+\end{equation}  The perturbation pressure is defined as
+\begin{align} \label{test5:p_pert}
+p^\prime(r,z) & = -\Delta p \, \exp\left[{-\left (\frac{r}{r_p} \right ) ^{3/2}} {-\left (\frac{z}{z_p} \right ) ^{2}}\right] \left ( \frac{T_{v0} - \Gamma z}{T_{v0}} \right )^{\frac{g}{R_d \Gamma}} & & \mbox{for $\; 0 \le z \le z_t$},  \nonumber \\
+p^\prime(r,z) & = 0 & & \mbox{for} \; z_t < z.
+\end{align}  The pressure perturbation depends on the pressure difference $\Delta p$ between the background surface pressure $p_b$ and the pressure at the center of the initial vortex, the pressure change in the radial direction $r_p$ and the pressure decay with height within the vortex $z_p$.  The moist surface pressure $p_s(r)$ is computed by setting $z = 0$ m in (\ref{eq5}), which gives
+\begin{equation}
+\label{eq:ps}
+p_s(r) = p_b - \Delta p \, \exp\left[{-\left (\frac{r}{r_p} \right ) ^{3/2}}\right].
 \end{equation}
 
-\subsection{Axisymmetric Vortex}
-
-The axisymmetric virtual temperature $T_v(r,z)$ is computed using the hydrostatic equation and ideal gas law (\ref{eq:idealgaslaw}).  Again it can be written as a sum of the background state and a perturbation,
+The axisymmetric virtual temperature $T_v(r,z)$ is computed using the hydrostatic equation and ideal gas law
+\begin{equation}
+T_v(r,z) = -\frac{g p(r,z)}{R_d} \left( \frac{\partial p(r,z)}{ \partial z} \right)^{-1}.
+\end{equation}  Again it can be written as a sum of the background state and a perturbation,
 \begin{equation} \label{eq:virt_temp}
 T_v(r,z) = \overline{T}_v(z) + T_v^\prime(r,z),
 \end{equation} where the virtual temperature perturbation is defined as
+\begin{align}
+\label{eq:Tv}
+T_v^\prime(r,z) &= (T_{v0} - \Gamma z ) \left\{ \left [1+ \frac{2R_d(T_{v0} - \Gamma z)z}{gz_p^2 \left[ 1 - \frac{p_b}{\Delta p}\exp\left({\left (\frac{r}{r_p} \right ) ^{3/2}} + {\left (\frac{z}{z_p} \right ) ^{2}} \right) \right] }\right]^{-1} - 1 \right\} & & \mbox{for} \; 0 \le z \le z_t, \nonumber \\
+T_v^\prime(r,z) &= 0 & & \mbox{for} \; z_t < z.
+\end{align} 
 
-\begin{equation}
-\begin{split}
-\overline{T}(z)&=\frac{T_{v0}-\Gamma z}{(1+0.608q(z))\left(1+\frac{2R_d(T_0-\Gamma z)z}{\left( g z_p^2\frac{1-p_s}{\delta_p}\exp\left(\left(\frac{g_r}{r_p}\right)^{1.5}\right)\exp\left(\left(\frac{z}{z_p}\right)^2\right) \right)}   \right)} \text{ ~~for   } 0 \leq z \leq z_t \\
-\overline{T}(z)&=T_{vt}  \text{ ~~for   }  z_t \leq z
-\end{split}
-\end{equation}
+The axisymmetric specific humidity $q(r,z)$ is set to the background profile everywhere
+\begin{eqnarray}
+\label{eq:q}
+q(r,z) = \overline{q}(z).
+\end{eqnarray}  Consequently, the temperature can be written as
+\begin{equation} \label{test5:T_eqn}
+T(r,z) = \overline{T}(z) + T^\prime(r,z),
+\end{equation} with the temperature perturbation
+\begin{align} \label{eq:temperature}
+T^\prime(r,z) &= \frac{T_{v0} - \Gamma z}{1+0.608\overline{q}(z)} \left\{ \left [1+ \frac{2R_d(T_{v0} - \Gamma z)z}{gz_p^2 \left[ 1 - \frac{p_b}{\Delta p}\exp\left({\left (\frac{r}{r_p} \right ) ^{3/2}} + {\left (\frac{z}{z_p} \right ) ^{2}} \right) \right] }\right]^{-1} - 1 \right\} & & \mbox{for} \; 0 \le z \le z_t, \nonumber \\
+T^\prime(r,z) &= 0 & & \mbox{for} \; z_t < z. 
+\end{align}  
+Due to the small specific humidity value in the upper atmosphere (10$^{-11}$ kg/kg for $z > z_t$) the virtual temperature equals the temperature to a very good approximation in this region. The formulation presented here is equivalent to the one presented in \cite{reed2012idealized}.
 
-~\\with the virtual temperature at the surface $T_{v0}$ = $T_0 (1+0.608 \, q_0)$ and the virtual temperature at the tropopause level $T_{vt}$ = $T_{v0} - \Gamma z_t$
+If the density of the moist air needs to be initialized its formulation is based on the ideal gas law
+\begin{equation} \label{eq:density}
+\rho(r,z) = \frac{p(r,z)}{R_d T_v(r,z)}
+\end{equation} 
+which utilizes the moist pressure (\ref{eq5}) and virtual temperature (\ref{eq:virt_temp}). The surface elevation $z_s$ and thereby the surface geopotential $\Phi_s=g z_s$ are set to zero.
+ 
+Finally, the tangential velocity field $v_T(r,z)$ of the axisymmetric vortex is defined by utilizing the gradient-wind balance, which depends on the pressure (\ref{eq5}) and the virtual temperature (\ref{eq:Tv}). The tangential velocity is given by
+\begin{eqnarray}
+\label{eq:gradient-wind}
+v_T(r,z) = -\frac{f_cr}{2}+\sqrt{ \frac{f_c^2r^2}{4}+\frac{R_d \, T_v(r,z) \, r}{p(r,z)} \frac{\partial p(r,z)}{\partial r}},
+\end{eqnarray}
+where $f_c = 2 \Omega \sin(\varphi_c)$ is the Coriolis parameter at the constant latitude $\varphi_c$. Substituting $T_v(r,z)$ and $p(r,z)$ into ({\ref{eq:gradient-wind}) gives
+\begin{align}
+\label{eq:gradient-wind-expr}
+v_T(r,z) & = -\frac{f_cr}{2}+\sqrt{ \frac{f_c^2r^2}{4}-\frac{\frac{3}{2} \left( \frac{r}{r_p}\right)^{3/2} (T_{v0}-\Gamma z) R_d}{1+\frac{2R_d(T_{v0}-\Gamma z)z}{g z_p^2}-\frac{p_b}{\Delta p}\exp\left({\left (\frac{r}{r_p} \right ) ^{3/2}} + {\left (\frac{z}{z_p} \right ) ^{2}} \right)}} & & \mbox{for} \; 0 \le z \le z_t, \nonumber \\
+v_T(r,z) & = 0 & & \mbox{for} \; z_t < z.
+\end{align}  The last step is to split the tangential velocity (\ref{eq:gradient-wind-expr}) into its zonal and meridional wind components $u(\lambda,\varphi,z)$ and $v(\lambda,\varphi,z)$. Similar to \cite{nair2008moving} these are computed using the following expressions,
+\begin{eqnarray}
+d_1 &=& \sin\varphi_c \, \cos\varphi - \cos\varphi_c \, \sin\varphi \, \cos(\lambda-\lambda_c) \\
+d_2 &=& \cos\varphi_c \, \sin(\lambda-\lambda_c) \\
+d &=& \max \big({\epsilon,\sqrt{ {d_1}^2 + {d_2}^2} } \big),
+\end{eqnarray}
+which are utilized in the projections
+\begin{eqnarray}
+\label{eqn:u_wind}
+u(\lambda,\varphi,z) &=& \frac{v_T(\lambda,\varphi,z) \, d_1}{d}\\ \label{eqn:v_wind}
+v(\lambda,\varphi,z) &=& \frac{v_T(\lambda,\varphi,z) \, d_2}{d} \,.
+\end{eqnarray}
+A small $\epsilon = 10^{-25}$ value avoids divisions by zero.  The vertical velocity is set to zero.
 
-~\\Height equation:
-\begin{equation}
-z=\frac{T_0}{\Gamma}\left(1-\left(\frac{p}{p_s}\right) ^{\frac{R_d\Gamma}{g}}\right)
-\end{equation}
+\subsection{Grid spacings, simulation time, output and diagnostics}
+
+\begin{itemize}
+\item Moist simulations should be performed at 0.5$^\circ$ resolution with 30 vertical levels for 10 days.
+\item Plots of minimum surface pressure over the duration of the simulation.
+\item Experiments could address the coupling frequency between the dynamics and physics.
+\item A variable resolution simulation should be performed that (a) studies the effect of the tropical cyclone transitioning from fine resolution to coarse resolution and (b) high resolution simulations down to 0.125$^\circ$ over the tropical cyclone.
+\end{itemize}
+
 
 \clearpage
 
-\section{Mesoscale Storm}  \label{sec:3}
+\section{Mesoscale Storm}  \label{sec:mesoscale_storm}
 
 ~\\ The study of mesoscale storm is the study of storm within a range of horizontal dimension  between 10 to hundreds kilometers. 
 
@@ -631,9 +695,9 @@ T_0=0.5(T_E +T_P)
 
 ~\\Earth scalling parameter is used for the baroclinic instability, it initialization doesn't change from non scaled baroclinic instability. However the scalling parameter X as an effect on the the planet radius and it rotation rate. The impact on both of those parameter are the following $a_{ref}=a_{earth}/X$ and $\Omega_{ref}=\Omega{earth}X$ , nevertheless the product of the two is an changed 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
+\bibliographystyle{wileyj}
+\bibliography{DCMIP2016}
 
 \end{document}    
