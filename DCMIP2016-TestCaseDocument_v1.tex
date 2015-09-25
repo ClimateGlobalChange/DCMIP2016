@@ -580,7 +580,15 @@ R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lam
 \clearpage
 \section{Terminator Physics}
 
-The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) without the wind perturbation and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
+The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
+
+\subsection{Grid spacings, simulation time, output and diagnostics}
+
+\begin{itemize}
+\item Dry simulations with the Toy Chemistry module (Appendix \ref{sec:ToyChemistry}) should be performed at 1$^\circ$ resolution with 30 vertical levels for 12 days.
+\item Plots of $q_{Cl}$, $q_{Cl2}$ and $q_T$ at 5000m altitude should be produced after $1$, $5$ and $12$ days. 
+\item Experiments could address the coupling frequency between the dynamics and physics.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
