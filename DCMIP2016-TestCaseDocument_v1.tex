@@ -26,14 +26,14 @@
 \begin{document}
 \setcounter{section}{-1}
 
-\title{Dynamical Core Model Intercomparison Project (DCMIP) \\
+\title{Dynamical Core Model Intercomparison Project (DCMIP2016) \\
  Test Case Document}
-\author{Antonin Verlet-Banide\\ Paul Aaron Ullrich \\Christiane Jablonowski \\ Kevin Reed \\ Colin Zarzycki \\ Peter Hjort Lauritzen \\ Ramachandran D. Nair \\ \vspace{3cm} DCMIP Summer School: June 2016}
+\author{Paul Aaron Ullrich \\Antonin Verlet-Banide\\ Christiane Jablonowski \\ Kevin Reed \\ Colin Zarzycki \\ Peter Hjort Lauritzen \\ Ramachandran D. Nair \\ James Kent \\ \vspace{3cm} DCMIP Summer School: June 2016}
 
 \maketitle
 
 \begin{center}
-Version 0.1 \\
+Version 0.2 \\
 \today
 \end{center}
 
@@ -58,10 +58,11 @@ Table \ref{tab:TestCases} provides an overview of all test cases described in th
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
 \hline Test Case \T \B& Description \\
 \hline \multicolumn{2}{l}{Tier 1 Test Cases (Required)} \T \B \\
-\hline 1-1 \T & Steady-state Terminator chemistry (pure advection) \\
-1-2 \T & Moist baroclinic wave \\
-1-3 \T & Idealized Tropical cyclone \\
-1-4 \T & Mesoscale storm \\
+\hline 
+1-1 \T & Moist baroclinic wave \\
+1-2 \T & Idealized Tropical cyclone \\
+1-3 \T & Mesoscale storm \\
+1-4 \T & Steady-state Terminator chemistry (pure advection) \\
 \hline \multicolumn{2}{l}{Tier 2 Test Cases (Optional)} \T \B \\  \hline 
 2-1 \T \B & Moist Held-Suarez test  \\ \hline
 \hline 
@@ -207,7 +208,7 @@ We have also provided a set of stand-alone Fortran routines that compute tendenc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
-\section{Moist Baroclinic Wave}   
+\section{Moist Baroclinic Wave} \label{sec:baroclinic_wave}
  
 This baroclinic instability test of \cite{ullrich2014proposed} considers a reference state in geostrophic and hydrostatic balance that satisfies the conditions for baroclinic instability.  Although a perfect model should be able to maintain this state indefinitely, small truncation errors associated with numerical inaccuracies and grid structure will trigger the development of the wave modes associated with baroclinic development.  To control the development of the baroclinic wave, a small perturbation (but one which is large compared with machine truncation) is added to the flow so as to trigger the development of a wave over a period of approximately 10 days.  A moist variant of the dry dynamical test of \cite{ullrich2014proposed} is considered here so as to understand the impact of moisture feedbacks on the development of the wave.
 
@@ -470,7 +471,7 @@ A small $\epsilon = 10^{-25}$ value avoids divisions by zero.  The vertical velo
 
 \section{Mesoscale Storm}  \label{sec:mesoscale_storm}
 
-The mesoscale storm test permits the study of a non-hydrostatic moist feature with strong vertical velocities and associated precipitation.
+The mesoscale storm test permits the study of a non-hydrostatic moist feature with strong vertical velocities and associated precipitation and is based on the work of \cite{klemp1978simulation}.
 
 \begin{table}[h]
 
@@ -501,7 +502,7 @@ $z_{p}$ & $1500$ m & Perturbation vertical half-width \\
 
 It is assumed that the saturation mixing ratio is given by
 \begin{equation}
-Q_{vs}(p,T) = \left( \frac{380.0}{p} \right) \exp\left(17.27 \times \frac{T-273.0}{T-36.0}\right)
+q_{vs}(p,T) = \left( \frac{380.0}{p} \right) \exp\left(17.27 \times \frac{T-273.0}{T-36.0}\right)
 \end {equation}  The definition of this test case relies on hydrostatic and gradient wind balance, written in terms of Exner pressure $\pi$ and virtual potential temperature $\theta_v$ as
 \begin{equation} \label{eq:BalanceEq}
 \pdiff{\pi}{z} = - \frac{g}{c_p \theta_v}, \quad \mbox{and} \quad u^2 \tan \varphi = - c_p \theta_v \pdiff{\pi}{\varphi}.
@@ -535,7 +536,7 @@ The equatorial profile is determined through numerical iteration.  Potential tem
 \pi_{\text{eq}}^{(i)} &= 1 - \int_{0}^{z} \frac{g}{c_p \theta_{v,\text{eq}}^{(i)}} dz \\
 p_{\text{eq}}^{(i)} &= p_0 (\pi^{(i)})^{c_p / R_d} \\
 T_{\text{eq}}^{(i)} &= \theta_{\text{eq}}(z) \pi_{\text{eq}}^{(i)} \\
-q^{(i)}_{\text{eq}} &= H(z) Q_{vs}(p_{\text{eq}}^{(i)}, T_{\text{eq}}^{(i)}) \\
+q^{(i)}_{\text{eq}} &= H(z) q_{vs}(p_{\text{eq}}^{(i)}, T_{\text{eq}}^{(i)}) \\
 \theta_{v,\text{eq}}^{(i+1)} &= \theta_{\text{eq}}(z) (1 + M_v q^{(i)}_{\text{eq}})
 \end{align}  This iteration procedure appears to converge to machine epsilon after approximately 10 iterations.  The equatorial moisture profile is then extended through the entire domain,
 \begin{equation}
@@ -579,168 +580,664 @@ R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lam
 \clearpage
 \section{Terminator Physics}
 
-\section{Toy Chemistry}
-
-The toy chemetry test represent the photolysis-driven condition with the the following equation representing the combination and the dissociation.
-\begin{equation}
-\begin{split}
-X+X&=X_2 \\
-X_2&=X+X \\
-\end{split}
-\end{equation}
-
-\begin{equation}
-X_T=X+2X_2
-\end{equation}
-
-\begin{equation}
-\begin{split}
-\frac{dX}{dt}&=2k_1X_2-2k_2XX \\
-\frac{dX_2}{dt}=-k_1X_2+k_2XX
-\end{split}
-\end{equation}
-
-Therefore we have 
-\begin{equation}
-\frac{X_T}{dt}= \frac{d}{dt}[X+2X_2]=0
-\end{equation}
-
-This implie that $X_T$ is constant, with it value
-
-\begin{equation}
-\begin{split}
-X_T=X(t)+2X_2(t)
-X_T=X(0)+2X_2(0)
-\end{split}
-\end{equation}
-
-Therefor we have
-\begin{equation}
-X_2=\frac{1}{2}(X_T-X(t))
-\end{equation}
-
-The two reaction rate coefficient  $k_1$ and $k_2$, representing the the photolytic breaking of molecule $X_2$ and the recombination. They can be describe as : 
-
-\begin {equation}
-\begin{split}
-k_1(\lambda,\theta)&= max[0,\sin\theta\sin\theta_c+\cos\theta\cos\theta_c
-\cos(\lambda-\lambda_c)] \\
-k_2(\lambda,\theta)&=1
-\end{split}
-\end{equation}
-
-Hence the molar mixing ration of cl will be implemented by :
-
-\begin{equation}
-X=\sqrt{\left(\frac{k_1}{4 k_2}\right)^2+2 X_T \frac{k_1}{4k_2} } - \frac{k_1}{4k_2}
-\end{equation}
-
-As follow $\text{cl}_2$ molar mixing ratio is :
-
-\begin{equation}
-X_2=\frac{1}{2}(_T-X)
-\end{equation}
-
-The tendency for cl and $\text{cl}_2$ is represnted by $ \frac{\partial q}{\partial t}$
-
-\clearpage
-\section{Kessler Physics}
-
-~\\Pressure equation obey to the following equation, written using the moist equation of state.
-
-\begin{equation}
-p=\rho R_dT(1+0,61q_v)
-\end{equation}
-
-~\\ with $p$ the pressure , $\rho$ the density of moist air, $R_d$ the gas constant for dry air, $T$ the temperature and $q_v$ the mixing ratio of water vapor. The equation is rewritten as a nondimensional pressure $\Pi$ equation.
-
-\begin{equation}
-\Pi=\left(\frac{p}{p_0}\right)^{\frac{R_dT}{cp}}
-\end{equation}
-
-
-~\\To determine the saturation vapor mixing ratio the Teten's formula is used.
-
-\begin{equation}
-q_{vs}=\frac{3.8}{p}\exp\left(17.27\frac{\Pi \theta-273}{\Pi \theta-36}\right)
-\end {equation}
-
-
-
-~\\The autotconvection ($A_r$) and accreation ($C_r$) rates follow Kessler parametrization and are defined by :
-
-\begin{equation}
-\begin{split}
-A_r&=k_1(q_c-a) \\
-C_r&=k_2q_cq_r^{0.875}
-\end{split}
-\end{equation}
-~\\ With $k_1=0.001 \text{s}^{-1}$, $a=0.001 \text{g}.\text{g}^{-1}$ and $k_2=2.2 \text{s}^{-1}$ 
-
-~\\ Deriving from Klemp and Wilhelmson (1978) description of cloud water,rain water and water vapor mixing ratios. they are define as followed:
-\begin{equation}
-q_c^{n+1}=max(q_c^r-\Delta q_r,0)
-\end{equation}
-\begin{equation}
-q_r^{n+1}=max(q_r^r-\Delta q_r+sed,0)
-\end{equation}
-
-~\\with sed the sedimentation term and $\Delta q_r$ define as :
-\begin{equation}
-\Delta q_r=q_c^n-\frac{q_c^n-\Delta \text{t} max(A_r,0)}{1+\Delta \text{t} C_r}
-\end{equation}
-
-
-
-
-
-
-~\\ The Rain evaporation equation is defined similarly to Ogura and Takshasi (1971) description:
-
-\begin{equation}
-E_r=\frac{1}{\rho}\frac{\left(1-\frac{q_v}{q_{vs}}\right)C(\rho q_r)^{0.525}}{5.4\times10^5+\frac{2.55\times10^6}{pq_{vs}}}
-\end{equation}
-
-
-
-~\\ With ventilation factor C define as 
-\begin{equation}
-C=1.6+124.9(\rho q_r)^{0.2046}
-\label{venti}
-\end{equation}
-
-
-
-~\\ The liquid water terminal velocity is similar to Song and Ogura (1973) description with a mean density adjustement as suggested by Kessler (1969):
-
-\begin{equation}
-V=36349(\rho q_r)^{0.1346}\left(\frac{\rho}{\rho_0}\right)^{-\frac{1}{2}}
-\end{equation}
-
-
-
-\clearpage 
-\appendix
-\section{Annexe}
-
-\begin{align*}
-A&= \frac{1}{lapse} \\
-B&=\frac{T_0-T_P}{T_0T_P} \\
-C&=0.5(K+2) \frac{T_E-T_P}{T_ET_P} \\
-H&=R_d\frac{T_0} {g}\\
-Z&=\frac{z}{B H}  
-\end{align*}
-
-
-\begin{equation*}
-T_0=0.5(T_E +T_P)
-\end{equation*}
-
-~\\Earth scalling parameter is used for the baroclinic instability, it initialization doesn't change from non scaled baroclinic instability. However the scalling parameter X as an effect on the the planet radius and it rotation rate. The impact on both of those parameter are the following $a_{ref}=a_{earth}/X$ and $\Omega_{ref}=\Omega{earth}X$ , nevertheless the product of the two is an changed 
+The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) without the wind perturbation and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{wileyj}
 \bibliography{DCMIP2016}
+
+\begin{appendix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Kessler Physics} \label{sec:KesslerPhysics}
+
+The cloud microphysics update according to the following equation set:
+\begin{alignat}{5}
+\frac{\Delta \theta}{\Delta t} = & - \frac{L}{c_p \pi} & \Big( \frac{\Delta q_{vs}}{\Delta t} & + E_r  \Big) & \\
+\frac{\Delta q_v}{\Delta t} = & & \frac{\Delta q_{vs}}{\Delta t} & + E_r \\
+\frac{\Delta q_c}{\Delta t} = & & - \frac{\Delta q_{vs}}{\Delta t} & & - A_r & - C_r \\
+\frac{\Delta q_r}{\Delta t} = & & & - E_r & + A_r & + C_r & - V_r \pdiff{q_r}{z},
+\end{alignat} where $L$ is the latent heat of condensation, $A_r$ is the autoconversion rate of cloud water to rain water, $C_r$ is the collection rate of rain water, $E_r$ is the rain water evaporation rate, and $V_r$ is the rain water terminal velocity.
+
+The pressure follows from the equation of state
+\begin{equation}
+p=\rho R_dT(1+0.61q_v)
+\end{equation} with $p$ the pressure, $\rho$ the density of moist air, $R_d$ the gas constant for dry air, $T$ the temperature and $q_v$ the mixing ratio of water vapor. The equation is rewritten as a nondimensional pressure $\Pi$ equation.
+\begin{equation}
+\pi = \left(\frac{p}{p_0}\right)^{\frac{R_dT}{cp}}
+\end{equation}
+
+To determine the saturation vapor mixing ratio the Teten's formula is used,
+\begin{equation}
+q_{vs}(p,T) = \left( \frac{380.0}{p} \right) \exp\left(17.27 \times \frac{T-273.0}{T-36.0}\right)
+\end {equation}
+
+The autoconvection rate ($A_r$) and collection rate ($C_r$) follow Kessler parametrization and are defined by:
+\begin{align}
+A_r &= k_1(q_c-a) \\
+C_r &= k_2q_cq_r^{0.875}
+\end{align} With $k_1=0.001 \text{s}^{-1}$, $a=0.001 \text{g}.\text{g}^{-1}$ and $k_2=2.2 \text{s}^{-1}$ 
+
+Deriving from \cite{klemp1978simulation} description of cloud water,rain water and water vapor mixing ratios. they are define as followed:
+\begin{equation}
+q_c^{n+1}=\mbox{max}(q_c^r-\Delta q_r,0)
+\end{equation}
+\begin{equation}
+q_r^{n+1}=\mbox{max}(q_r^r-\Delta q_r+S,0)
+\end{equation} where $S$ is the sedimentation term and $\Delta q_r$ is defined as
+\begin{equation}
+\Delta q_r=q_c^n-\frac{q_c^n-\Delta \text{t}\ \mbox{max}(A_r,0)}{1+\Delta \text{t} C_r}
+\end{equation}
+
+The Rain evaporation equation is defined similarly to \cite{ogura1971numerical} description:
+\begin{equation}
+E_r=\frac{1}{\rho}\frac{\left(1-\frac{q_v}{q_{vs}}\right)C(\rho q_r)^{0.525}}{5.4\times10^5+\frac{2.55\times10^6}{pq_{vs}}}
+\end{equation}  With ventilation factor C define as 
+\begin{equation}
+C_r=1.6+124.9(\rho q_r)^{0.2046}
+\label{venti}
+\end{equation}
+
+The liquid water terminal velocity is similar to \cite{soong1973comparison} description with a mean density adjustment as suggested by \cite{kessler1969distribution}:
+\begin{equation}
+V_r = 36349(\rho q_r)^{0.1346}\left(\frac{\rho}{\rho_0}\right)^{-\frac{1}{2}}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Toy Chemistry} \label{sec:ToyChemistry}
+
+The toy chemistry module represents a simple photolysis-driven chemical reaction that incorporates combination and the dissociation of a chemical species:
+\begin{align}
+Cl + Cl &= Cl_2 && \mbox{(reaction rate $k_1$)}\\
+Cl_2&=Cl+Cl && \mbox{(reaction rate $k_2$)}.
+\end{align}
+
+Observe that the total number of molecules of the chemical species are conserved in this reaction,
+\begin{equation}
+Cl_T=Cl+2 Cl_2.
+\end{equation}  Representing the mixing ratios of these species as $q_{Cl}$ and $q_{Cl2}$, we can define the total mixing ratio of Chlorine atoms as
+\begin{equation}
+q_{Cl,T} = q_{Cl} + 2 q_{Cl2}.
+\end{equation}
+
+The differential equations describing the evolution of $Cl$ and $Cl_2$ under this reaction take the form
+\begin{align}
+\frac{Dq_{Cl}}{Dt} &= 2k_1 q_{Cl2} -2k_2 q_{Cl}^2, \\
+\frac{Dq_{Cl2}}{Dt} &= -k_1 q_{Cl2} + k_2 q_{Cl}^2,
+\end{align} where $D/Dt$ denotes the Lagrangian derivative.  Observe that the total mixing ratio of Chlorine atoms then satisfies
+\begin{equation}
+\frac{Dq_{Cl,T}}{Dt} = \frac{Dq_{Cl}}{Dt} + 2 \frac{Dq_{Cl2}}{Dt} = 0,
+\end{equation} and so the total mixing ratio of Chlorine is held constant.
+
+The two reaction rate coefficient  $k_1$ and $k_2$, representing the the photolytic dissociation and recombination of Chlorine gas are defined as
+\begin{align}
+k_1(\lambda,\theta)&= \mbox{max} \left[ 0,\sin\theta\sin\theta_c+\cos\theta\cos\theta_c
+\cos(\lambda-\lambda_c) \right] \\
+k_2(\lambda,\theta)&=1,
+\end{align} where $(\lambda_c, \theta_c)$ denote the sub-solar point on the Earth's surface.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Surface Fluxes on an Aqua-Planet with Prescribed Sea Surface Temperatures} \label{sec:OceanSurfaceFluxes}
+
+The forcing by surface fluxes from an idealized ocean is described in \cite{reed2012idealized} and is partly reproduced here. We use a model configuration which corresponds to an aqua-planet setup with prescribed sea surface temperatures (SSTs). This forcing by the surface fluxes is applied to the state variables in the lowermost model level using a partially implicit formulation to avoid numerical instabilities.  Throughout this section we use the subscript $a$ to denote variables defined on the lowermost model level.
+
+The surface fluxes depend on the \textit{drag coefficient} $C_d$, defined as
+\begin{equation} \label{eq:DragCoefficient}
+\begin{array}{ll}
+C_d = C_{d0} + C_{d1} \vert \vec{v}_a \vert & \mbox{for $\vert \vec{v}_a \vert < 20$ m s$^{-1}$} \\ 
+C_d = 0.002 & \mbox{for $\vert \vec{v}_a \vert \geq 20$ m s$^{-1}$}, 
+\end{array}
+\end{equation}
+where $C_{d0}$ and $C_{d1}$ are $7.0 \times 10^{-4}$ (unitless) and $6.5 \times 10^{-5}$ s m$^{-1}$, respectively, and $\vert \vec{v}_a \vert$ is the magnitude of the horizontal wind at the lowermost model level.  In terms of the zonal wind $u_a$ and meridional wind $v_a$, it is defined as
+\begin{equation}
+\vert \vec{v}_a \vert = \sqrt{u_a^2 + v_a^2}.
+\end{equation}  For both evaporation and sensible heat the bulk coefficient is set to
+\begin{equation} \label{eq:BulkTransferCoefficient}
+C_E = C_H = 0.0011.
+\end{equation}
+
+The formulation of the surface fluxes makes use of the height of the lowermost full model level $z_a$ (in m).  For pressure-based models, $z_a$ can be expressed with the help of the hydrostatic equation in terms of pressure
+\begin{eqnarray} \label{eqn:za}
+z_a = \frac{R_d T_{\nu,a}}{g} \frac{(\ln p_s- \ln p_-)}{2},
+\end{eqnarray}
+where $T_{\nu,a} = T_a (1+0.608 q_a)$ is the virtual temperature at the lowermost full model level and $p_-$ is the edge pressure at the model level interface between the lowest and second lowest full model levels. This notation and all following equations assume that the temperature, horizontal wind components and the specific humidity in the physical parameterization package are co-located in both the vertical and horizontal directions, as is the case for the Lorenz grid. The height of the lowest full model level should ideally lie between 60-70m above the ground to make the results comparable to those in the literature.
+
+As described in \cite{reed2012idealized}, the surface fluxes can be written as
+\begin{eqnarray}
+\frac{\partial \vec{v}_a}{\partial t} &=& - \frac{C_d \vert \vec{v}_a \vert \vec{v}_a}{z_a} \label{sfu} \\
+\frac{\partial T_a}{\partial t} &=& \frac{C_H \vert \vec{v}_a \vert (T_s-T_a)}{z_a} \label{sft} \\
+\frac{\partial q_a}{\partial t} &=& \frac{C_E \vert \vec{v}_a \vert(q_{sat,s}-q_a)}{z_a}. \label{sfq}
+\end{eqnarray}
+We note that the wind at the surface is taken to be zero and therefore does not appear explicitly in (\ref{sfu}).  In these equations $T_s$  denotes the prescribed sea surface temperature (SST) and $q_{sat,s}$ is the saturation specific humidity defined by (\ref{qsatcalc}) and computed with the SST value.
+
+The final form of the surface fluxes will vary for models with other choices of prognostic variables. For example, if potential temperature $\Theta_a$ is used (\ref{sft}) takes the form
+\begin{eqnarray}
+\frac{\partial \Theta_a}{\partial t} &=& \frac{C_H \vert \vec{v}_a \vert (T_s-T_a)}{z_a} \left (\frac{p_0}{p_a} \right )^{R_d/c_p} \label{sftheta}
+\end{eqnarray}
+where $p_0 = 1000$ hPa is a reference pressure. This conversion uses the assumption that the pressure is time-invariant when individual physics parameterizations are applied. For other choices of prognostic variables like $(\rho u)_a$, $(\rho v)_a$, $(\rho \Theta)_a$ and $(\rho q)_a$ the right-hand-side of (\ref{sfu}), (\ref{sftheta}) and (\ref{sfq}) would need to be multiplied by the density of the air $\rho$.
+
+In order to ensure numerical stability, each of the aforementioned surface fluxes are applied via a semi-implicit operator.  We demonstrate this procedure on the temperature evolution equation (\ref{sft}).  First, the time derivative is expanded using a backward Euler operator,
+\begin{eqnarray}
+\frac{T_a^{n+1}-T_a^n}{\Delta t} &=& \frac{C_H \vert \vec{v}_a^n \vert (T_s-T_a^{n+1})}{z_a}.
+\end{eqnarray}
+The superscripts $n$ and $n+1$ represent the current time step (after the update from the large-scale condensation scheme) and the future time step, respectively. Note, that on the right-hand-side of the equation the only variable taken implicitly is $T_a$. $\vert \vec{v}_a^n \vert$ is evaluated at the current time step and $C_H$ is constant. The equation can now be solved for $T_a^{n+1}$
+\begin{eqnarray} \label{Tsurfflux}
+T_a^{n+1} &=& \frac{T_a^n + C_H \vert \vec{v}_a^n \vert T_s \frac{\Delta t}{z_a}}{1 + C_H \vert \vec{v}_a^n \vert\frac{\Delta t}{z_a}}.
+\end{eqnarray}
+Similar equations for $\vec{v}_a$ and $q_a$ can be calculated
+\begin{eqnarray}
+\vec{v}_a^{n+1} &=& \frac{\vec{v}_a^n}{1 + C_d^n \vert \vec{v}_a^n \vert\frac{\Delta t}{z_a}} \label{qusurfflux}\\
+q_a^{n+1} &=& \frac{q_a^n + C_E \vert \vec{v}_a^n \vert q_{sat,s}^n \frac{\Delta t}{z_a}}{1 + C_E \vert \vec{v}_a^n \vert\frac{\Delta t}{z_a}}, \label{qsurfflux}
+\end{eqnarray} 
+with the time-level dependent coefficient $C_d^n$. Notice that the second term in the numerator of (\ref{qusurfflux}) is absent in the case of the zonal and merdional wind. This is because the wind is set to zero at the surface.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Simplified Mixing in the Planetary Boundary Layer} \label{sec:PlanetaryBoundaryLayer}
+
+The forcing by the planetary boundary layer is described in \cite{reed2012idealized} and is partly reproduced here.  To parameterize the surface fluxes that impact the zonal velocity $u$, the meridional velocity $v$ and moisture $q$ we start with the time rate of change equations
+\begin{eqnarray}
+\frac{\partial u}{\partial t} &=& - \frac{1}{\rho} \frac{\partial \rho \ \overline{w'u'}}{\partial z} \label{eqturb}  \\
+\frac{\partial v}{\partial t} &=& - \frac{1}{\rho} \frac{\partial \rho \ \overline{w'v'}}{\partial z}  \label{eqturb_v} \\
+\frac{\partial q}{\partial t} &=& - \frac{1}{\rho} \frac{\partial \rho \ \overline{w'q'}}{\partial z}.  \label{eqturb_last}
+\end{eqnarray}  Potential temperature, as opposed to temperature, is used in the boundary layer parameterization because the vertical profile of the potential temperature is a suitable indicator of static stability.  This adds the time rate of change equation
+\begin{eqnarray}
+\frac{\partial \Theta}{\partial t} &=& - \frac{1}{\rho} \frac{\partial \rho \ \overline{w'\Theta'}}{\partial z}.
+\end{eqnarray}  Here $u'$, $v'$, $w'$, $\Theta'$ and $q'$ symbolize the deviations of the zonal velocity, meridional velocity, vertical velocity, potential temperature and specific humidity from their averages, respectively. The average is indicated by an overbar.  The eddy turbulence surface momentum fluxes on the RHS of (\ref{eqturb})-(\ref{eqturb_last}) are approximated by the bulk aerodynamic formulae in kinematic units
+\begin{eqnarray} \label{usurfflux}
+\overline{w'u'} &=& -C_d \vert \vec{v} \vert u \\ 
+\overline{w'v'} &=& -C_d \vert \vec{v} \vert v \label{vsurfflux},
+\end{eqnarray} where $C_d$ is again defined by (\ref{eq:DragCoefficient}).  Evaporation occurs at the surface and is similarly described by the kinematic eddy flux of water vapor. It is expressed via the bulk formula for latent heat
+\begin{equation} \label{lhflux}
+\overline{w'q'} = C_E \vert \vec{v} \vert (q_{sat}-q),
+\end{equation}
+where $C_E$ is defined by (\ref{eq:BulkTransferCoefficient}), $q_{sat}$ is again defined by (\ref{qsatcalc}) and $q$ is the specific humidity.  The kinematic eddy sensible heat flux at the surface is defined by the formula
+\begin{equation}
+\overline{w'\Theta'} = C_H \vert \vec{v} \vert (\Theta_{s}-\Theta),
+\end{equation} where $\Theta_{s}$ is the potential temperature at the surface.  Assuming pressure is held constant (which is a common assumption in physical parameterizations), the potential temperature time tendency can be converted back to a temperature tendency of the following form
+\begin{eqnarray}
+\frac{\partial T}{\partial t} &=& - \frac{1}{\rho} \left (\frac{p}{p_0} \right )^{\kappa} \frac{\partial \rho \ \overline{w'\Theta'}}{\partial z}.
+\end{eqnarray}
+with the reference pressure $p_0 = 1000$ hPa.
+
+We suggest implementing the boundary layer scheme with an implicit temporal discretization to avoid numerical instabilities. The details of this discretization are somewhat complicated, and so we refer to implementation details in Appendix D of \cite{reed2012idealized}. In addition, we supply the DCMIP modeling groups with the complete ``simple-physics'' package as used in the model CAM which can serve as a template routine.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Required netCDF output format} 
+\label{sec:netcdf}
+As mentioned in section~\ref{sec:notes_output} a fundamental requirement for the exchange of scientific data is the ability to  precisely describe the physical quantities being represented. We require data in the `Network Common Data Form' (netCDF) \cite{netcdf} that adhere to the netCDF Climate and Forecast (CF) metadata convention (if possible to version 1.6 from Dec. 2011 \cite{netcdf-cf}). NetCDF files should have the file name extension ``.nc''.
+In particular, netCDF metadata need to be present. If models cannot adhere to the CF standards, we will work with these modeling groups before the DCMIP workshop and evaluate the application of `NCO' (netCDF operator \cite{nco}) tools to help make the output netCDF-CF compliant after the model execution. 
+
+\subsection{Global attributes}
+We ask for netCDF ``global attributes'' that make the output files self-describing and searchable by cyberinfrastructure tools. We ask for the inclusion of the global attributes
+\begin{itemize}
+\item model
+\item test\_case
+\item horizontal\_resolution
+\item levels
+\item grid
+\item equation
+\item time\_frequency
+\item description
+\end{itemize}
+The first six entries need to follow the file naming convention outlined in Tables \ref{tab:keywords} and \ref{tab:keywordsgrid} with one exception for models with non-latitude-longitude computational grids. The ``grid'' attribute needs to indicate the computational base grid like ``cubed'' for a cubed-sphere model regardless of any interpolations to a regular latitude-longitude output grid. The models will then be searchable on the DCMIP webpage according to their computational meshes.
+The ``time\_frequency'' attribute indicates the output frequency in seconds (s), hours (hr) or days (day), and needs be specified as e.g.
+\begin{verbatim}
+ time_frequency = "1hr"
+ time_frequency = "6hr"
+ time_frequency = "day"
+ time_frequency = "100s"
+ \end{verbatim}
+for the 1-hourly, 6-hourly, daily, or 100-second output. The last ``100s'' entry refers to the unscaled time in the non-rotating small-planet experiments 21, 22 and 31. However, the rotating small-planet experiments (411, 412, 413) with the scaled ``daily'' output need to be specified with the scaled time\_frequency attribute ``day'' to make the comparison to the unscaled experiment 410 simple.
+Other global attributes might also be present as shown in the example in section \ref{netcdf-example}.
+
+\subsection{Coordinates, variable names, metadata}
+The standard netCDF variable names (here denoted as ``acronyms''), the requested physical `units' attribute, a suggested `long\_name' and the standardized netCDF attribute `standard\_name' are listed in Tables \ref{tab:netcdf} and \ref{tab:netcdf_opt}. The entry for the netCDF attribute `long\_name' can be freely selected. However, if `standard\_name' is present its value must come from the standard netCDF  CF-compliant entries listed below. The `units' and `long\_name' attributes need to be part of the metadata of the netCDF output file. The `standard\_name' might be added as an option.
+Remember that the case is significant in netCDF names, and that all variable listed in Tables \ref{tab:netcdf} and \ref{tab:netcdf_opt} are written with upper case letters, all others like the dimensions or coordinates are written with lower case letters.
+% netCDF data types float (single precision) for the dynamic variables, double for longitudes, latitude, levels, hybrid coefficients, ...
+
+\begin{table}[h]
+\caption{List of symbols and corresponding netCDF attributes} \label{tab:netcdf}
+%\ \\
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lllll}
+\hline Symbol & Acronym & `units' & Suggested `long\_name'  & NetCDF `standard\_name' \\ \hline 
+$\lambda$ & lon & degrees\_east & longitude & longitude \\
+$\varphi$ & lat & degrees\_north & latitude & latitude \\
+$p_s$ & PS & Pa & Surface pressure & surface\_pressure\\
+$\Phi_s$ & PHIS & m2/m2 &  Surface geopotential & surface\_geopotential\\
+$u$ & U & m/s &  Zonal wind & eastward\_wind \\
+$v$ & V & m/s & Meridional wind & northward\_wind\\
+$w$ & W & m/s & Vertical velocity & upward\_air\_velocity\\
+$\omega$ & OMEGA & Pa/s & Vertical pressure velocity & lagrangian\_tendency\_of\_air\_pressure \\
+$p$ & P & Pa & Pressure & air\_pressure\\
+$T$ & T & K & Temperature & air\_temperature\\
+$q$ & Q & kg/kg & Specific humidity & specific\_humidity\\
+$P_{ls}$ & PRECL & m/s & Large-scale precipitation rate & rainfall\_rate\\
+$q1$ & Q1 & kg/kg & Tracer mixing ratio q1 & \\
+$q2$ & Q2 & kg/kg & Tracer mixing ratio q2 & \\
+$q3$ & Q3 & kg/kg & Tracer mixing ratio q3 & \\
+$q4$ & Q4 & kg/kg & Tracer mixing ratio q4 & \\
+\hline 
+\end{tabular*}
+\end{table}
+
+\begin{table}[h]
+\caption{Optional model variables: List of symbols and corresponding netCDF attributes} \label{tab:netcdf_opt}
+%\ \\
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llll}
+\hline Symbol & Acronym & `units' & Suggested `long\_name'  \\ \hline 
+$SST$ & SST & K & Sea surface temperature  \\
+$u_{850}$ & U850 & m/s &  Zonal wind at 850 hPa   \\
+$v_{850}$ & V850 & m/s & Meridional wind at 850 hPa  \\
+$w_{500}$ & W500 &m/s &  Vertical velocity at 500 hPa   \\
+$w_{850}$ & W850 &m/s &  Vertical velocity at 850 hPa   \\
+$\omega_{500}$ & OMEGA500 & Pa/s &  Vertical pressure velocity at 500 hPa   \\
+$\omega_{850}$ & OMEGA850 & Pa/s &  Vertical pressure velocity at 850 hPa   \\
+$T_{500}$ & T500 & K & Temperature at 500 hPa  \\
+$T_{850}$ & T850 & K & Temperature at 850 hPa  \\
+\hline 
+\end{tabular*}
+\end{table}
+
+
+\subsection{Example: Selected entries of a netCDF file with latitude-longitude grid}
+\label{netcdf-example}
+An example of selected entries of an NCAR CAM-FV output file `cam-fv.42.medium.L30'  is shown below. The simulation was run at the medium resolution on a regular $181 \times 360$ latitude-longitude grid with grid spacing $1^{\circ} \times 1^{\circ}$ (including the poles) and 30 hybrid $\eta$-levels. Note that this output data set also lists the approximate (reference) pressure positions of the 30 full levels (lev) and 31 model interface levels (ilev) as well as the hybrid coefficients for the full (hyam, hybm) and half levels (hyai, hybi). The latter can be used in combination with the surface pressure to reconstruct the actual pressure at each grid point as explained in section \ref{appendix:verticalcord} (where hyam and hybm correspond to the coefficients $A_k$ and $B_k$ in (\ref{coeff_A}) and (\ref{coeff_B})). The surface geopotential PHIS is provided as a 3D data set despite its time-independency. The time-dependent data sets PS, U, V, T and OMEGA (actual data not listed) contain 61 instantaneous 6-hourly snapshots between day 0 and 15. In addition, the NetCDF header also lists variables on the 850 hPa pressure surface.
+
+Desirable output quantities are the time step 'mdt' used for the simulation (here it represents the physics time step 1800 s), and the `gw' field. The latter contains the latitudinal area-based (``Gaussian'') weights that need to be used for area-averages on the latitude-longitude grid. The sum of these `gw' weights is 2.
+
+ \vspace{0.5cm}
+\noindent
+Example of a NetCDF file (header and selected entries and data sets):
+\begin{verbatim}
+netcdf cam-fv.42.medium.L30.latlon.hydro.4th_order_div_damping.nc {
+dimensions:
+  lat = 181 ;
+  lon = 360 ;
+  lev = 30 ;
+  ilev = 31 ;
+  time = UNLIMITED ; // (61 currently)
+variables:
+  double P0 ;
+    P0:long_name = "reference pressure" ;
+    P0:units = "Pa" ;
+  double lat(lat) ;
+    lat:long_name = "latitude" ;
+    lat:units = "degrees_north" ;
+  double lon(lon) ;
+    lon:long_name = "longitude" ;
+    lon:units = "degrees_east" ;
+  double lev(lev) ;
+    lev:long_name = "hybrid level at midpoints(1000*(A+B))" ;
+    lev:units = "level" ;
+    lev:positive = "down" ;
+    lev:standard_name = "atmosphere_hybrid_sigma_pressure_coordinate" ;
+    lev:formula_terms = "a: hyam b: hybm p0: P0 ps: PS" ;
+  double ilev(ilev) ;
+    ilev:long_name = "hybrid level at interfaces (1000*(A+B))" ;
+    ilev:units = "level" ;
+    ilev:positive = "down" ;
+    ilev:standard_name = "atmosphere_hybrid_sigma_pressure_coordinate" ;
+    ilev:formula_terms = "a: hyai b: hybi p0: P0 ps: PS" ;
+  double time(time) ;
+    time:long_name = "time" ;
+    time:units = "days since 2000-01-01 00:00:00" ;
+    time:calendar = "none" ;
+  double mdt ;
+    mdt:long_name = "timestep" ;
+    mdt:units = "s" ;
+  double hyai(ilev) ;
+    hyai:long_name = "hybrid A coefficient at layer interfaces" ;
+  double hybi(ilev) ;
+    hybi:long_name = "hybrid B coefficient at layer interfaces" ;
+  double hyam(lev) ;
+    hyam:long_name = "hybrid A coefficient at layer midpoints" ;
+  double hybm(lev) ;
+    hybm:long_name = "hybrid B coefficient at layer midpoints" ;
+  double gw(lat) ;
+    gw:long_name = "gauss weights" ;
+  float PHIS(lat, lon) ;
+    PHIS:units = m2/s2" ;
+    PHIS:long_name = "Surface geopotential" ;
+  float PS(time, lat, lon) ;
+    PS:units = "Pa" ;
+    PS:long_name = "Surface pressure" ;
+  float PRECL(time, lat, lon) ;
+     PRECL:units = "m/s" ;
+     PRECL:long_name = "Large-scale precipitation rate" ;
+  float Q(time, lev, lat, lon) ;
+     Q:units = "kg/kg" ;
+     Q:long_name = "Specific humidity" ;      
+  float T(time, lev, lat, lon) ;
+    T:units = "K" ;
+    T:long_name = "Temperature" ;
+  float U(time, lev, lat, lon) ;
+    U:units = "m/s" ;
+    U:long_name = "Zonal wind" ;
+  float V(time, lev, lat, lon) ;
+    V:units = "m/s" ;
+    V:long_name = "Meridional wind" ;
+  float OMEGA(time, lev, lat, lon) ;
+    OMEGA:units = Pa/s" ;
+    OMEGA:long_name = "Vertical pressure velocity" ;
+  float OMEGA850(time, lat, lon) ;
+    OMEGA850:units = Pa/s" ;
+    OMEGA850:long_name = "Vertical pressure velocity at 850 hPa" ;
+  float T850(time, lat, lon) ;
+    T850:units = "K" ;
+    T850:long_name = "Temperature at 850 hPa" ;
+  float U850(time, lat, lon) ;
+    U850:units = "m/s" ;
+    U850:long_name = "Zonal wind at 850 hPa" ;
+  float V850(time, lat, lon) ;
+    V850:units = "m/s" ;
+    V850:long_name = "Meridional wind at 850 hPa" ;
+    
+// global attributes:
+                :Conventions = "CF-1.0" ;
+                :model = "cam-fv" ;
+                :test_case = "42" ;
+                :horizontal_resolution= "medium" ;
+                :levels = "L30" ;
+                :grid = "latlon" ;
+                :equation = "hydro";
+                :time_frequency = "6hr";
+                :description = "4th-oder divergence damping" ;
+
+data:
+
+ P0 = 100000 ;
+
+ lat = -90.0, -89.0, -88.0, -87.0, -86.0, -85.0, -84.0, -83.0, 
+      -82.0, -81.0, -80.0, -79.0, -78.0, -77.0, -76.0, -75.0, 
+      -74.0, -73.0, -72.0, -71.0, -70.0, -69.0, -68.0, -67.0, 
+      -66.0, -65.0, -64.0, -63.0, -62.0, -61.0, -60.0, -59.0, 
+      -58.0, -57.0, -56.0, -55.0, -54.0, -53.0, -52.0, -51.0, 
+      -50.0, -49.0, -48.0, -47.0, -46.0, -45.0, -44.0, -43.0, 
+      -42.0, -41.0, -40.0, -39.0, -38.0, -37.0, -36.0, -35.0, 
+      -34.0, -33.0, -32.0, -31.0, -30.0, -29.0, -28.0, -27.0, 
+      -26.0, -25.0, -24.0, -23.0, -22.0, -21.0, -20.0, -19.0, 
+      -18.0, -17.0, -16.0, -15.0, -14.0, -13.0, -12.0, -11.0, 
+      -10.0,  -9.0,  -8.0,  -7.0,  -6.0,  -5.0,  -4.0,  -3.0, 
+       -2.0,  -1.0,   0.0,   1.0,   2.0,   3.0,   4.0,   5.0, 
+        6.0,   7.0,   8.0,   9.0,  10.0,  11.0,  12.0,  13.0, 
+       14.0,  15.0,  16.0,  17.0,  18.0,  19.0,  20.0,  21.0, 
+       22.0,  23.0,  24.0,  25.0,  26.0,  27.0,  28.0,  29.0, 
+       30.0,  31.0,  32.0,  33.0,  34.0,  35.0,  36.0,  37.0, 
+       38.0,  39.0,  40.0,  41.0,  42.0,  43.0,  44.0,  45.0, 
+       46.0,  47.0,  48.0,  49.0,  50.0,  51.0,  52.0,  53.0, 
+       54.0,  55.0,  56.0,  57.0,  58.0,  59.0,  60.0,  61.0, 
+       62.0,  63.0,  64.0,  65.0,  66.0,  67.0,  68.0,  69.0, 
+       70.0,  71.0,  72.0,  73.0,  74.0,  75.0,  76.0,  77.0, 
+       78.0,  79.0,  80.0,  81.0,  82.0,  83.0,  84.0,  85.0, 
+       86.0,  87.0,  88.0,  89.0,  90.0;
+
+ lon =   0.,   1.,   2.,   3.,   4.,   5.,   6.,   7.,   8.,   9., 
+        10.,  11.,  12.,  13.,  14.,  15.,  16.,  17.,  18.,  19., 
+        20.,  21.,  22.,  23.,  24.,  25.,  26.,  27.,  28.,  29., 
+        30.,  31.,  32.,  33.,  34.,  35.,  36.,  37.,  38.,  39., 
+        40.,  41.,  42.,  43.,  44.,  45.,  46.,  47.,  48.,  49., 
+        50.,  51.,  52.,  53.,  54.,  55.,  56.,  57.,  58.,  59., 
+        60.,  61.,  62.,  63.,  64.,  65.,  66.,  67.,  68.,  69., 
+        70.,  71.,  72.,  73.,  74.,  75.,  76.,  77.,  78.,  79., 
+        80.,  81.,  82.,  83.,  84.,  85.,  86.,  87.,  88.,  89., 
+        90.,  91.,  92.,  93.,  94.,  95.,  96.,  97.,  98.,  99., 
+       100., 101., 102., 103., 104., 105., 106., 107., 108., 109., 
+       110., 111., 112., 113., 114., 115., 116., 117., 118., 119., 
+       120., 121., 122., 123., 124., 125., 126., 127., 128., 129., 
+       130., 131., 132., 133., 134., 135., 136., 137., 138., 139., 
+       140., 141., 142., 143., 144., 145., 146., 147., 148., 149., 
+       150., 151., 152., 153., 154., 155., 156., 157., 158., 159., 
+       160., 161., 162., 163., 164., 165., 166., 167., 168., 169., 
+       170., 171., 172., 173., 174., 175., 176., 177., 178., 179., 
+       180., 181., 182., 183., 184., 185., 186., 187., 188., 189., 
+       190., 191., 192., 193., 194., 195., 196., 197., 198., 199., 
+       200., 201., 202., 203., 204., 205., 206., 207., 208., 209., 
+       210., 211., 212., 213., 214., 215., 216., 217., 218., 219., 
+       220., 221., 222., 223., 224., 225., 226., 227., 228., 229., 
+       230., 231., 232., 233., 234., 235., 236., 237., 238., 239., 
+       240., 241., 242., 243., 244., 245., 246., 247., 248., 249., 
+       250., 251., 252., 253., 254., 255., 256., 257., 258., 259., 
+       260., 261., 262., 263., 264., 265., 266., 267., 268., 269., 
+       270., 271., 272., 273., 274., 275., 276., 277., 278., 279., 
+       280., 281., 282., 283., 284., 285., 286., 287., 288., 289., 
+       290., 291., 292., 293., 294., 295., 296., 297., 298., 299., 
+       300., 301., 302., 303., 304., 305., 306., 307., 308., 309., 
+       310., 311., 312., 313., 314., 315., 316., 317., 318., 319., 
+       320., 321., 322., 323., 324., 325., 326., 327., 328., 329., 
+       330., 331., 332., 333., 334., 335., 336., 337., 338., 339., 
+       340., 341., 342., 343., 344., 345., 346., 347., 348., 349., 
+       350., 351., 352., 353., 354., 355., 356., 357., 358., 359.;
+       
+ gw = 0.3807694E-04, 0.3045981E-03, 0.6091034E-03, 0.9134232E-03, 
+      0.1217465E-02, 0.1521135E-02, 0.1824343E-02, 0.2126994E-02, 
+      0.2428998E-02, 0.2730262E-02, 0.3030694E-02, 0.3330203E-02, 
+      0.3628698E-02, 0.3926087E-02, 0.4222280E-02, 0.4517187E-02, 
+      0.4810718E-02, 0.5102784E-02, 0.5393296E-02, 0.5682164E-02, 
+      0.5969302E-02, 0.6254621E-02, 0.6538035E-02, 0.6819458E-02, 
+      0.7098804E-02, 0.7375987E-02, 0.7650923E-02, 0.7923528E-02, 
+      0.8193721E-02, 0.8461417E-02, 0.8726535E-02, 0.8988996E-02, 
+      0.9248719E-02, 0.9505624E-02, 0.9759633E-02, 0.1001067E-01, 
+      0.1025866E-01, 0.1050352E-01, 0.1074518E-01, 0.1098357E-01, 
+      0.1121862E-01, 0.1145024E-01, 0.1167838E-01, 0.1190297E-01, 
+      0.1212392E-01, 0.1234118E-01, 0.1255469E-01, 0.1276437E-01, 
+      0.1297016E-01, 0.1317200E-01, 0.1336983E-01, 0.1356358E-01, 
+      0.1375321E-01, 0.1393864E-01, 0.1411983E-01, 0.1429672E-01, 
+      0.1446925E-01, 0.1463738E-01, 0.1480104E-01, 0.1496020E-01, 
+      0.1511480E-01, 0.1526480E-01, 0.1541015E-01, 0.1555080E-01, 
+      0.1568672E-01, 0.1581785E-01, 0.1594417E-01, 0.1606564E-01, 
+      0.1618221E-01, 0.1629385E-01, 0.1640052E-01, 0.1650220E-01, 
+      0.1659886E-01, 0.1669045E-01, 0.1677697E-01, 0.1685837E-01, 
+      0.1693464E-01, 0.1700575E-01, 0.1707168E-01, 0.1713241E-01, 
+      0.1718792E-01, 0.1723819E-01, 0.1728322E-01, 0.1732298E-01, 
+      0.1735746E-01, 0.1738666E-01, 0.1741056E-01, 0.1742915E-01, 
+      0.1744244E-01, 0.1745041E-01, 0.1745307E-01, 0.1745041E-01, 
+      0.1744244E-01, 0.1742915E-01, 0.1741056E-01, 0.1738666E-01, 
+      0.1735746E-01, 0.1732298E-01, 0.1728322E-01, 0.1723819E-01, 
+      0.1718792E-01, 0.1713241E-01, 0.1707168E-01, 0.1700575E-01, 
+      0.1693464E-01, 0.1685837E-01, 0.1677697E-01, 0.1669045E-01, 
+      0.1659886E-01, 0.1650220E-01, 0.1640052E-01, 0.1629385E-01, 
+      0.1618221E-01, 0.1606564E-01, 0.1594417E-01, 0.1581785E-01, 
+      0.1568672E-01, 0.1555080E-01, 0.1541015E-01, 0.1526480E-01, 
+      0.1511480E-01, 0.1496020E-01, 0.1480104E-01, 0.1463738E-01, 
+      0.1446925E-01, 0.1429672E-01, 0.1411983E-01, 0.1393864E-01, 
+      0.1375321E-01, 0.1356358E-01, 0.1336983E-01, 0.1317200E-01, 
+      0.1297016E-01, 0.1276437E-01, 0.1255469E-01, 0.1234118E-01, 
+      0.1212392E-01, 0.1190297E-01, 0.1167838E-01, 0.1145024E-01, 
+      0.1121862E-01, 0.1098357E-01, 0.1074518E-01, 0.1050352E-01, 
+      0.1025866E-01, 0.1001067E-01, 0.9759633E-02, 0.9505624E-02, 
+      0.9248719E-02, 0.8988996E-02, 0.8726535E-02, 0.8461417E-02, 
+      0.8193721E-02, 0.7923528E-02, 0.7650923E-02, 0.7375987E-02, 
+      0.7098804E-02, 0.6819458E-02, 0.6538035E-02, 0.6254621E-02, 
+      0.5969302E-02, 0.5682164E-02, 0.5393296E-02, 0.5102784E-02, 
+      0.4810718E-02, 0.4517187E-02, 0.4222280E-02, 0.3926087E-02, 
+      0.3628698E-02, 0.3330203E-02, 0.3030694E-02, 0.2730262E-02, 
+      0.2428998E-02, 0.2126994E-02, 0.1824343E-02, 0.1521135E-02, 
+      0.1217465E-02, 0.9134232E-03, 0.6091034E-03, 0.3045981E-03, 
+      0.3807694E-04;
+
+ lev = 3.64346569404006, 7.59481964632869, 14.3566322512925, 
+    24.6122200042009, 38.2682997733355, 54.5954797416925, 72.0124505460262, 
+    87.8212302923203, 103.317126631737, 121.547240763903, 142.994038760662, 
+    168.225079774857, 197.908086702227, 232.828618958592, 273.910816758871, 
+    322.241902351379, 379.100903868675, 445.992574095726, 524.687174707651, 
+    609.778694808483, 691.389430314303, 763.404481112957, 820.858368650079, 
+    859.53476652503, 887.020248919726, 912.644546944648, 936.198398470879, 
+    957.485479535535, 976.325407391414, 992.556095123291 ;
+
+ ilev = 2.25523952394724, 5.03169186413288, 10.1579474285245, 
+    18.5553170740604, 30.6691229343414, 45.8674766123295, 63.3234828710556, 
+    80.7014182209969, 94.9410423636436, 111.69321089983, 131.401270627975, 
+    154.586806893349, 181.863352656364, 213.952820748091, 251.704417169094, 
+    296.117216348648, 348.366588354111, 409.83521938324, 482.149928808212, 
+    567.22442060709, 652.332969009877, 730.445891618728, 796.363070607185, 
+    845.353666692973, 873.715866357088, 900.324631482363, 924.964462406933, 
+    947.432334534824, 967.538624536246, 985.112190246582, 1000 ;
+
+ hyai = 0.00225523952394724, 0.00503169186413288, 0.0101579474285245, 
+    0.0185553170740604, 0.0306691229343414, 0.0458674766123295, 
+    0.0633234828710556, 0.0807014182209969, 0.0949410423636436, 
+    0.11169321089983, 0.131401270627975, 0.154586806893349, 
+    0.181863352656364, 0.17459799349308, 0.166050657629967, 
+    0.155995160341263, 0.14416541159153, 0.130248308181763, 
+    0.113875567913055, 0.0946138575673103, 0.0753444507718086, 
+    0.0576589405536652, 0.0427346378564835, 0.0316426791250706, 
+    0.0252212174236774, 0.0191967375576496, 0.0136180268600583, 
+    0.00853108894079924, 0.00397881818935275, 0, 0 ;
+
+ hybi = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0393548272550106, 
+    0.0856537595391273, 0.140122056007385, 0.204201176762581, 
+    0.279586911201477, 0.368274360895157, 0.47261056303978, 
+    0.576988518238068, 0.672786951065063, 0.753628432750702, 
+    0.813710987567902, 0.848494648933411, 0.881127893924713, 
+    0.911346435546875, 0.938901245594025, 0.963559806346893, 
+    0.985112190246582, 1 ;
+
+ hyam = 0.00364346569404006, 0.00759481964632869, 0.0143566322512925, 
+    0.0246122200042009, 0.0382682997733355, 0.0545954797416925, 
+    0.0720124505460262, 0.0878212302923203, 0.103317126631737, 
+    0.121547240763903, 0.142994038760662, 0.168225079774857, 
+    0.178230673074722, 0.170324325561523, 0.161022908985615, 
+    0.150080285966396, 0.137206859886646, 0.122061938047409, 
+    0.104244712740183, 0.0849791541695595, 0.0665016956627369, 
+    0.0501967892050743, 0.037188658490777, 0.028431948274374, 
+    0.0222089774906635, 0.016407382208854, 0.0110745579004288, 
+    0.00625495356507599, 0.00198940909467638, 0 ;
+
+ hybm = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0196774136275053, 
+    0.062504293397069, 0.112887907773256, 0.172161616384983, 
+    0.241894043982029, 0.323930636048317, 0.420442461967468, 
+    0.524799540638924, 0.624887734651566, 0.713207691907883, 
+    0.783669710159302, 0.831102818250656, 0.864811271429062, 
+    0.896237164735794, 0.92512384057045, 0.951230525970459, 
+    0.974335998296738, 0.992556095123291 ;
+
+ time = 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25,
+    2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75,
+    5, 5.25, 5.5, 5.75, 6, 6.25, 6.5, 6.75, 7, 7.25,
+    7.5, 7.75, 8, 8.25, 8.5, 8.75, 9, 9.25, 9.5, 9.75,
+    10, 10.25, 10.5, 10.75, 11, 11.25, 11.5, 11.75, 12, 12.25, 
+    12.5, 12.75, 13, 13.25, 13.5, 13.75, 14, 14.25, 14.5, 14.75, 
+    15 ;
+ 
+ mdt = 1800 ;
+
+}
+\end{verbatim}
+Note that the notation of the variables uses the NetCDF-specific order of the dimensions (time,lev,lat,lon). We ask for output data (like U, V, T, PS, etc.) with single precision (float) accuracy using 4 bytes per datum. This uses the storage space more economically than double-precision (double) data. 
+
+\subsection{Dimensions \& metadata \& time stamp}
+The NetCDF file must contain information about the grid and time dimensions. For a regular latitude-longitude grid (either as the native computational grid or as the result of interpolations) the dimensions need to utilize the keywords (see also the in section \ref{netcdf-example})
+\begin{verbatim}
+dimensions:
+  lat = 181 ;
+  lon = 360 ;
+  lev = 30 ;
+  ilev = 31 ;
+  time = UNLIMITED ; // (61 currently)
+\end{verbatim}
+where ``lat'' and ``lon'' denote the number of latitudes and longitudes, ``lev'' and ``ilev'' symbolize the number of full model levels and interface levels, and `time' denotes the number of time snapshots. These keywords for the dimensions are also used to define the size of the coordinate arrays like
+\begin{verbatim}
+  double lat(lat) ;
+    lat:long_name = "latitude" ;
+    lat:units = "degrees_north" ;
+  double lon(lon) ;
+    lon:long_name = "longitude" ;
+    lon:units = "degrees_east" ;
+\end{verbatim}
+and to define the dimensions of the model output variables like
+\begin{verbatim}
+  float U(time, lev, lat, lon) ;
+    U:units = "m/s" ;
+    U:long_name = "Zonal wind" ;
+\end{verbatim}
+
+As in the example above, the coordinates and model output variables need to be accompanied by metadata that describe, at a minimum, the ``units'' and ``long\_name'' of the entry, except ``units'' are not necessary for non-dimensional quantities. The ``standard\_name'' as listed in Table \ref{tab:netcdf} might also be included.
+
+Idealized test cases are not associated with a particular date. However, a date must be chosen as a reference date, e.g.
+\begin{verbatim}
+  double time(time) ;
+    time:long_name = "time" ;
+    time:units = "days since 2000-01-01 00:00:00" ;
+    time:calendar = "none" ;
+\end{verbatim}
+so that the data entries for the ``time'' variable can read
+\begin{verbatim}
+ time = 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25,
+    2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75,
+    5, 5.25, 5.5, 5.75, 6, 6.25, 6.5, 6.75, 7, 7.25,
+    7.5, 7.75, 8, 8.25, 8.5, 8.75, 9, 9.25, 9.5, 9.75,
+    10, 10.25, 10.5, 10.75, 11, 11.25, 11.5, 11.75, 12, 12.25, 
+    12.5, 12.75, 13, 13.25, 13.5, 13.75, 14, 14.25, 14.5, 14.75, 
+    15 ;
+\end{verbatim}
+for 6-hourly snapshots. We recommend picking the reference date ``2000-01-01 00:00:00''. This date is arbitrary and irrelevant for practical purposes, since the model simulations are idealized. However, a sensible date such as this must be picked to avoid potential problems in the DCMIP visualization tools.
+Daily time snapshots (e.g. 13 snapshots for 12 days including the initial state) need to be listed as
+\begin{verbatim}
+ time = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
+\end{verbatim}
+
+\subsection{Computational grid}
+The netCDF file must list the longitudinal and latitudinal positions of the horizontal grid (in degrees) and must contain sufficient information about the vertical grid. In orography-following hybrid $\sigma-p$ ($\eta$) coordinates, as shown in the example in section \ref{netcdf-example}, the necessary information for the reconstruction of the pressure values along the full model and interface levels is the surface pressure PS, the surface geopotential PHIS and the list of the 'a' and 'b' hybrid coefficients, here called HYAM, HYBM, HYAI, HYBI. 
+The key point is that the vertical positions of the grid, either in pressure coordinates (for most hydrostatic model) or height coordinates (for most non-hydrostatic models), need to be reconstructable based on the information in the netCDF output file. Details on the vertical grids and the equations for the reconstruction of the pressure or height values need to be provided, possibly in form of a model documentation or a journal paper. In addition, the netCDF file needs to define whether the order of the vertical levels is positive downwards (``down''), as in the example above, or positive upwards (``up''). The metadata entry `positive =' as shown in
+\begin{verbatim}
+  double lev(lev) ;
+    lev:long_name = "hybrid level at midpoints(1000*(A+B))" ;
+    lev:units = "level" ;
+    lev:positive = "down" ;
+    lev:standard_name = "atmosphere_hybrid_sigma_pressure_coordinate" ;
+    lev:formula_terms = "a: hyam b: hybm p0: P0 ps: PS" ;
+\end{verbatim}
+defines this order, and needs to be present. If the vertical arrangement can be freely chosen, the `down' numbering system is recommended (level counter increases downwards).
+
+\subsection{Example: NetCDF data structure for a non-latitude-longitude grid}
+An example netCDF data structure for a non-latitude-longitude (e.g. spherical geodesic) grid is given below.
+
+\begin{verbatim}
+dimensions:
+   cell = 2562 ;  // number of grid cells
+   lev = 30 ;
+   ilev = 31 ;
+   time = UNLIMITED ; // (11 currently)
+variables:
+  double lon(cell) ;
+    lon:long_name = "longitude" ;
+    lon:units = "degrees_east" ;
+    lon:bounds="lon_vertices" ;
+  double lat(cell) ;
+    lat:long_name = "latitude" ;
+    lat:units = "degrees_north" ;
+    lat:bounds="lat_vertices" ;
+  double time(time) ;
+    time:long_name = "time" ;
+    time:units = "days since 2000-01-01 00:00:00" ;
+  double cell_area(cell) ;
+    cell_area:long_name = "area of grid cell" ;
+    cell_area:standard_name="area";
+    cell_area:units = "m2"
+  float PS(time,cell) ;
+    PS:units = "Pa" ;
+    PS:coordinates = "lon lat" ;
+    PS:cell_measures = "area: cell_area" ;
+    PS:long_name = "Surface pressure" ; 
+  float T(time, lev, cell) ;
+    T:units = "K" ;
+    T:coordinates = "lon lat" ;
+    T:cell_measures = "area: cell_area" ;
+    T:long_name = "Temperature" ;
+\end{verbatim}
+
+On non-latitude-longitude grids  the area weight ``cell\_area'' of cell should be included in the netCDF output file. This allows for the computation of global error norms based on the original grid point locations. 
+Here, the data structure for the non-orthogonal grid utilizes a single index ``cell'' for all positions of the horizontal grid. The longitudinal and latitudinal positions are listed according this single array index. Other data structures are also possible.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{appendix}
 
 \end{document}    
