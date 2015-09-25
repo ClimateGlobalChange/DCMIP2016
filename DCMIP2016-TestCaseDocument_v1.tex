@@ -140,7 +140,7 @@ $\rho_{water}$ & Density of water & 1000 kg m$^{-3}$ \\
 
 The great circle distance is used throughout the document and is given by
 \begin{equation}
-R(\lambda_1, \varphi_1; \lambda_2, \varphi_2) = a \arccos \left( \sin \varphi_1 \sin \varphi_2 + \cos \varphi_1 \cos \varphi_2 \cos (\lambda_1 - \lambda_2) \right).
+R_c(\lambda_1, \varphi_1; \lambda_2, \varphi_2) = a \arccos \left( \sin \varphi_1 \sin \varphi_2 + \cos \varphi_1 \cos \varphi_2 \cos (\lambda_1 - \lambda_2) \right).
 \end{equation}
 
 \subsection{Choice of Prognostic Variables and Equation of State}
@@ -470,71 +470,114 @@ A small $\epsilon = 10^{-25}$ value avoids divisions by zero.  The vertical velo
 
 \section{Mesoscale Storm}  \label{sec:mesoscale_storm}
 
-~\\ The study of mesoscale storm is the study of storm within a range of horizontal dimension  between 10 to hundreds kilometers. 
+The mesoscale storm test permits the study of a non-hydrostatic moist feature with strong vertical velocities and associated precipitation.
 
-~\\The wind velocity, temperature and moisture are analytically defined. Potential temperature and relative humidity at the equator are altitude dependent and are defined by the following equations :
+\begin{table}[h]
 
+\caption{List of constants used for the Mesoscale Storm test}
+
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
+\hline Constant & Value & Description \\
+\hline
+$X$ & $120$ & Small-planet scaling factor (reduced Earth)\\
+$\theta_{tr}$ & $343$ K & Temperature at the tropopause \\
+$\theta_0$ & $300$ K & Temperature at the equatorial surface \\
+$z_{tr}$ & $12000$ m & Altitude of the tropopause \\
+$T_{tr}$ & $213$ K & Temperature at the tropopause \\
+$U_s$ & $30$ m/s & Maximum zonal wind velocity \\
+$U_c$ & $15$ m/s & Coordinate reference velocity \\
+$z_{s}$ & $5000$ m & Lower altitude of maximum velocity \\
+$\Delta z_{u}$ & $1000$ m & Transition distance of velocity \\
+$\Delta \theta$ & $3$ K & Thermal perturbation magnitude \\
+$\lambda_p$ & $0$ & Thermal perturbation longitude \\
+$\varphi_p$ & $0$ & Thermal perturbation latitude \\
+$r_p$ & $X \times 10000$ m & Perturbation horizontal half-width \\
+$z_{c}$ & $1500$ m & Perturbation center altitude \\
+$z_{p}$ & $1500$ m & Perturbation vertical half-width \\
+\hline 
+\end{tabular*}
+
+\end{table}
+
+It is assumed that the saturation mixing ratio is given by
 \begin{equation}
-\begin{split}
-\overline{\theta}(z)&=\theta_0 + (\theta_t - \theta_0)\left(\frac{z}{z_t}\right)^{\frac{5}{4}}  \ 0 \leq z \leq z_t \\
-\overline{\theta}(z)&=\theta_t \exp\left(-\frac{g(z-z_t)}{c_pT_{t}}\right) \text{ ~~for   }  z_t \leq z
-\end{split}
+Q_{vs}(p,T) = \left( \frac{380.0}{p} \right) \exp\left(17.27 \times \frac{T-273.0}{T-36.0}\right)
+\end {equation}  The definition of this test case relies on hydrostatic and gradient wind balance, written in terms of Exner pressure $\pi$ and virtual potential temperature $\theta_v$ as
+\begin{equation} \label{eq:BalanceEq}
+\pdiff{\pi}{z} = - \frac{g}{c_p \theta_v}, \quad \mbox{and} \quad u^2 \tan \varphi = - c_p \theta_v \pdiff{\pi}{\varphi}.
+\end{equation}  These equations can be combined to eliminate $\pi$, leading to
+\begin{equation} \label{eq:CombinedBalanceEq}
+\pdiff{\theta_v}{\varphi} = \frac{\sin (2 \varphi)}{2 g} \left( u^2 \pdiff{\theta_v}{z} - \theta_v \pdiff{u^2}{z} \right).
 \end{equation}
 
- \begin{equation}
-\begin{split}
-\overline{H}(z)&=1 + \frac{3}{4}\left(\frac{z}{z_t}\right)^{\frac{5}{4}}  \ 0 \leq z \leq z_t \\
-\overline{H}(z)&= \frac{1}{4} \text{ ~~for   }  z_t \leq z
-\end{split}
-\end{equation}
-
-The saturation mixing ratio $q_{vs}$ is applied to initialize the water vapor ratio defined by $q = \overline{H}(z) q_{vs} $. The saturation mixing ratio equation is describe as :
-
- \begin{equation}
-q_{vs}=\frac{380}{p}\exp\left(17.27\frac{ T-273}{T-36}\right)
-\end {equation}
-
-The zonal wind velocity equation follow the J.Klemp description as a continuous profile in three equations:
-
+The wind velocity is analytically defined throughout the domain.  Meridional and vertical wind is initially set to zero.  The zonal wind is obtained from
 \begin{equation}
-\begin{split}
-\overline{u}(\phi,z)&=\left(U_s\frac{z}{z_t}-U_c\right)\cos(\phi)  \text{ ~~for   } z < z_s-1000 \\
-\overline{u}(\phi,z)&=\left(-\frac{4}{5}+3\frac{z}{z_s}-\frac{5}{4}\frac{z^2}{z_s^2}\right)U_s-U_c \text{ ~~for   }  |z-z_s| \leq 1000 \\
-\overline{u}(\phi,z)&=\left(U_s-U_c\right)\cos(\phi)  \text{ ~~for   } \text{ ~~for   }  z > z_s+1000 
-\end{split}
+\overline{u}(\varphi,z) = \left\{ \begin{array}{ll}
+\displaystyle \left(U_s\frac{z}{z_t}-U_c\right)\cos(\varphi) & \mbox{for $z < z_s - \Delta z_u$}, \\[2.0ex]
+\displaystyle \left(-\frac{4}{5}+3\frac{z}{z_s}-\frac{5}{4}\frac{z^2}{z_s^2}\right)U_s-U_c & \mbox{for $\vert z-z_s \vert \leq \Delta z_u$} \\[2.0ex]
+\displaystyle \left(U_s-U_c\right)\cos(\varphi) & \mbox{for $z > z_s + \Delta z_u$}
+\end{array} \right.
 \end{equation}
 
-
-
-~\\ At initial condition the hydrostatic balance is requested. It can be written in function of the pressure and the temperature or as followed in terms of the exner function and the virtual potential temperature :
-
-  \begin{equation}
- \frac{\partial{\Pi}}{\partial z} = - \frac{g}{c_p\theta_v}
- \end {equation}
-
-
-
-\subsection{potential temperature perturbation}
-
-A termal perturbation is added to the potential temperature field defined as follow
-
+The equatorial profile is determined through numerical iteration.  Potential temperature at the equator is specified via
 \begin{equation}
-\begin{split}
-\theta_i(\lambda,\phi,z)&=\overline{u}(\phi,z) + \Delta\phi\cos^2\left(\frac{\pi}{2}R_{\phi}\right) \text{ ~~for   } R_{\phi} < 1 \\
-\theta_i(\lambda,\phi,z)&=\overline{u}(\phi,z) \text{ ~~for   } R_{\phi} \geq 1
-\end{split}
+\theta_{\text{eq}}(z) = \left\{ \begin{array}{ll} \displaystyle \theta_0 + (\theta_{tr} - \theta_0)\left(\frac{z}{z_{tr}}\right)^{\frac{5}{4}}  & \mbox{for $0 \leq z \leq z_{tr}$,} \\[2.0ex]
+\displaystyle \theta_{tr} \exp\left(-\frac{g(z-z_{tr})}{c_pT_{tr}}\right) & \mbox{for $z_{tr} \leq z$} \end{array} \right.
+\end{equation}  And relative humidity is given by
+\begin{equation}
+\overline{H}(z) = \left\{ \begin{array}{ll} \displaystyle 1 + \frac{3}{4}\left(\frac{z}{z_{tr}}\right)^{5/4} & \mbox{for $0 \leq z \leq z_{tr}$,} \\[2.0ex]
+\displaystyle \frac{1}{4} & \mbox{for $z_{tr} \leq z$.} \end{array} \right.
+\end{equation}  Pressure and temperature at the equator are obtained by iterating on hydrostatic balance  with initial state
+\begin{equation}
+\theta_{v,\text{eq}}^{(0)}(z) = \theta_{\text{eq}}(z),
+\end{equation} and iteration procedure
+\begin{align}
+\pi_{\text{eq}}^{(i)} &= 1 - \int_{0}^{z} \frac{g}{c_p \theta_{v,\text{eq}}^{(i)}} dz \\
+p_{\text{eq}}^{(i)} &= p_0 (\pi^{(i)})^{c_p / R_d} \\
+T_{\text{eq}}^{(i)} &= \theta_{\text{eq}}(z) \pi_{\text{eq}}^{(i)} \\
+q^{(i)}_{\text{eq}} &= H(z) Q_{vs}(p_{\text{eq}}^{(i)}, T_{\text{eq}}^{(i)}) \\
+\theta_{v,\text{eq}}^{(i+1)} &= \theta_{\text{eq}}(z) (1 + M_v q^{(i)}_{\text{eq}})
+\end{align}  This iteration procedure appears to converge to machine epsilon after approximately 10 iterations.  The equatorial moisture profile is then extended through the entire domain,
+\begin{equation}
+q(z, \varphi) = q_{\text{eq}}(z).
 \end{equation}
 
+Once the equatorial profile has been constructed, the virtual potential temperature through the remainder of the domain can be computed by iterating on (\ref{eq:CombinedBalanceEq}),
+\begin{align}
+\theta_v^{(i+1)}(z,\varphi) = \theta_{v,\text{eq}}(z) + \int_{0}^{\varphi} \frac{\sin(2 \phi)}{2 g} \left(\overline{u}^2 \pdiff{\theta_{v}^{(i)}}{z} - \theta_v^{(i)} \pdiff{\overline{u}^2}{z} \right) d\varphi.
+\end{align}  Again, approximately 10 iterations are needed for convergence to machine epsilon.  Once virtual potential temperature has been computed throughout the domain, Exner pressure throughout the domain can be obtained from (\ref{eq:BalanceEq}),
+\begin{equation}
+\pi(z,\varphi) = \pi_{eq}(z) - \int_{0}^{\varphi} \frac{u^2 \tan \varphi}{c_p \theta_v} d\varphi,
+\end{equation} and so
+\begin{align}
+p(z,\varphi) &= p_0 \pi(z,\varphi)^{c_p / R_d}, \\
+T_v(z,\varphi) &= \theta_v(z,\varphi) (p / p_0)^{R_d / c_p}.
+\end{align}
 
- \begin{equation}
-T=\frac{theta_v}{1+0.61q}\left(\frac{p}{p_0}\right)^{\frac{R_d}{c_p}}
+\subsection{Potential temperature perturbation}
+
+To initiate convection, a thermal perturbation is introduced in the initial potential temperature field:
+\begin{equation}
+\theta^\prime(\lambda,\phi,z) = \left\{ \begin{array}{ll} \displaystyle \Delta \theta \cos^2\left(\frac{\pi}{2}R_{\theta}(\lambda, \varphi, z)\right) & \mbox{for $R_{\theta}(\lambda, \varphi, z) < 1$,} \\[2.0ex]
+0 & \mbox{for $R_{\theta}(\lambda, \varphi, z) \geq 1$,} \end{array} \right.
+\end{equation} where
+\begin{equation}
+R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lambda_p, \varphi_p)}{r_p} \right)^2 + \left( \frac{z - z_c}{z_p} \right)^2 \right]^{1/2}.
 \end{equation}
+
+\subsection{Grid spacings, simulation time, output and diagnostics}
+
+\begin{itemize}
+\item Moist simulations should be performed at 1$^\circ$ resolution with 30 vertical levels for 2 hours.
+\item Plots of vertical velocity and rainwater should be produced at 5 km altitude after 30, 60, 90 and 120 minutes over the domain $[0, 130E] \times [40S, 40N]$.
+\item A plot of maximum vertical velocity over the duration of the simulation should be produced.
+\item Experiments could address the coupling frequency between the dynamics and physics.
+\item A variable resolution simulation should be performed that (a) studies the effect of the mesoscale storm transitioning from fine resolution to coarse resolution and (b) high resolution simulations down to 0.125$^\circ$ over the mesoscale storm.
+\end{itemize}
+
 
 \clearpage
 \section{Terminator Physics}
-
-
-
 
 \section{Toy Chemistry}
 
