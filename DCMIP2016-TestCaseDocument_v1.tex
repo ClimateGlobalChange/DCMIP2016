@@ -57,10 +57,10 @@ The set of test cases collected in this document has been developed for the 2016
 \hline Test Case \T \B& Description \\
 \hline \multicolumn{2}{l}{Tier 1 Test Cases (Required)} \T \B \\
 \hline 
-1-1 \T & Moist baroclinic wave \\
+1-1 \T & Moist baroclinic wave with terminator chemistry \\
 1-2 \T & Idealized Tropical cyclone \\
 1-3 \T & Mesoscale storm \\
-1-4 \T & Steady-state Terminator chemistry (pure advection) \\
+%1-4 \T & Steady-state Terminator chemistry (pure advection) \\
 \hline \multicolumn{2}{l}{Tier 2 Test Cases (Optional)} \T \B \\  \hline 
 2-1 \T \B & Moist Held-Suarez test  \\ \hline
 \hline 
@@ -304,6 +304,24 @@ q(\lambda, \varphi, \eta) &=& \left\{ \begin{array}{ll} \displaystyle q_0 \exp\B
 \end{eqnarray} The functional form of $q$ and its parameters were inspired by observations. This moisture fields leads to maximum relative humidities around 85\% in the lower levels of the midlatitudes.
 
 Note that the moist temperature is colder than the temperature one would obtain with $q = 0$. However, note that in the moist case the virtual temperature and moist pressure determine the strength of the pressure gradient term in the momentum equations. Since these are identical to the temperature and pressure in the dry case, the forcing by the pressure gradient term is the same in both the dry and moist variant of the baroclinic wave. The moist variant of the baroclinic wave without the temperature forcing from large-scale condensation should lead to almost identical results when compared to the dry version. Very small variations are expected since the moisture gets independently transported as a passive tracer in this case and some models utilize the moist variant of the physical constant $c_p$. If possible, the dry $c_p$ should be used. Comparing the evolution of the dry baroclinic wave to its moist variant (without large-scale condensation) can serve as a first sensibility check.
+
+\subsection{Terminator `toy'-chemistry}
+
+The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
+
+
+
+\cite{LCLVT2015GMD}
+%\subsection{Grid spacings, simulation time, output and diagnostics}
+%
+%\begin{itemize}
+%\item Dry simulations with the Toy Chemistry module (Appendix \ref{sec:ToyChemistry}) should be performed at 1$^\circ$ resolution with 30 vertical levels for 12 days.
+%\item Plots of $q_{Cl}$, $q_{Cl2}$ and $q_T$ at 5000m altitude should be produced after $1$, $5$ and $12$ days. 
+%\item Experiments could address the coupling frequency between the dynamics and physics.
+%\end{itemize}
+
+
+
 
 \subsection{Grid spacings, simulation time, output and diagnostics}
 
@@ -575,18 +593,6 @@ R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lam
 \end{itemize}
 
 
-\clearpage
-\section{Terminator Physics}
-
-The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
-
-\subsection{Grid spacings, simulation time, output and diagnostics}
-
-\begin{itemize}
-\item Dry simulations with the Toy Chemistry module (Appendix \ref{sec:ToyChemistry}) should be performed at 1$^\circ$ resolution with 30 vertical levels for 12 days.
-\item Plots of $q_{Cl}$, $q_{Cl2}$ and $q_T$ at 5000m altitude should be produced after $1$, $5$ and $12$ days. 
-\item Experiments could address the coupling frequency between the dynamics and physics.
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
