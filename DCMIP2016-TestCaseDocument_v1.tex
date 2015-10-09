@@ -306,6 +306,25 @@ q(\lambda, \varphi, \eta) &=& \left\{ \begin{array}{ll} \displaystyle q_0 \exp\B
 Note that the moist temperature is colder than the temperature one would obtain with $q = 0$. However, note that in the moist case the virtual temperature and moist pressure determine the strength of the pressure gradient term in the momentum equations. Since these are identical to the temperature and pressure in the dry case, the forcing by the pressure gradient term is the same in both the dry and moist variant of the baroclinic wave. The moist variant of the baroclinic wave without the temperature forcing from large-scale condensation should lead to almost identical results when compared to the dry version. Very small variations are expected since the moisture gets independently transported as a passive tracer in this case and some models utilize the moist variant of the physical constant $c_p$. If possible, the dry $c_p$ should be used. Comparing the evolution of the dry baroclinic wave to its moist variant (without large-scale condensation) can serve as a first sensibility check.
 
 \subsection{Terminator `toy'-chemistry}
+The terminator `toy'-chemistry is presented in \cite{LCLVT2015GMD} and mimics photolysis-driven processes near the solar terminator. Two passive{\footnote{i.e. tracer does not feed back on the flow}} tracers, Cl and Cl$_2$, that are chemically reactive are transported. The sources and sinks are given by a simple, but non-linear, `toy' chemistry. This chemistry mimics photolysis-driven processes near the solar terminator.  As a result, strong gradients in the spatial distribution of the species develop near the edge of the terminator. Despite the large spatial variations in Cl and Cl$_2$ the weighted sum Cl$_y$=Cl+2Cl$_2$ should always be preserved in any flow field.  The terminator test demonstrates how well the advection/transport scheme preserves linear correlations. Physics-dynamics coupling can also be studied with this test.
+
+An overview of the terminator chemistry is given in \ref{sec:ToyChemistry}. Fortran subroutines that, given $(\lambda,\theta)$ will return the tendencies for $q_{Cl}$ (mixing ratio) and $q_{Cl2}$ (mixing ratio), are provided as supplemental material in \cite{LCLVT2015GMD}. The initial conditions for Cl and Cl$_2$ in \cite{LCLVT2015GMD} are for a two-dimensional transport problem on the sphere. We extend the two-dimensional intial conditions by using the same ininitial condition for the Chlorine species in each layer:
+\begin{eqnarray}
+q_{Cl}&=& \\
+q_{Cl2}&=&
+\end{eqnarray}
+As a diagnostic for Cl$_y$ conservation we used the average column integrated Cl$_y$
+\begin{equation}
+<q_{Cly}>=\frac{\int q_{Cly}\, dz}{\int dz}=\frac{\int q_{Cly}\, dp}{\int dp},
+\end{equation}
+where
+\begin{equation}
+q_{Cly}=q_{Cl}+2q_{Cl2}.
+\end{equation}
+The exact solution is that $q_{Cly}$ remains constant in time:
+\begin{equation}
+q_{Cly}(t)=q_{Cly}(t=0)=4.0\times 10^{-6}\, kg/kg.
+\end{equation}
 
 The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
 
