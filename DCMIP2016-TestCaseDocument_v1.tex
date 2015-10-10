@@ -307,12 +307,19 @@ Note that the moist temperature is colder than the temperature one would obtain 
 
 \subsection{Terminator `toy'-chemistry}
 The terminator `toy'-chemistry is presented in \cite{LCLVT2015GMD} and mimics photolysis-driven processes near the solar terminator. Two passive{\footnote{i.e. tracer does not feed back on the flow}} tracers, Cl and Cl$_2$, that are chemically reactive are transported. The sources and sinks are given by a simple, but non-linear, `toy' chemistry. This chemistry mimics photolysis-driven processes near the solar terminator.  As a result, strong gradients in the spatial distribution of the species develop near the edge of the terminator. Despite the large spatial variations in Cl and Cl$_2$ the weighted sum Cl$_y$=Cl+2Cl$_2$ should always be preserved in any flow field.  The terminator test demonstrates how well the advection/transport scheme preserves linear correlations. Physics-dynamics coupling can also be studied with this test.
+\begin{figure}[t]
+\includegraphics[width=\linewidth]{terminator_reaction_rates.pdf}
+\caption{Contour plot of the terminator-`like' reaction coefficient $k_1(\lambda,\theta)$ where $\lambda$ and $\theta$ are longitude and latitude, respectively.}
+\label{fig:k1}
+\end{figure}
 
 An overview of the terminator chemistry is given in \ref{sec:ToyChemistry}. Fortran subroutines that, given $(\lambda,\theta)$ will return the tendencies for $q_{Cl}$ (mixing ratio) and $q_{Cl2}$ (mixing ratio), are provided as supplemental material in \cite{LCLVT2015GMD}. The initial conditions for Cl and Cl$_2$ in \cite{LCLVT2015GMD} are for a two-dimensional transport problem on the sphere. We extend the two-dimensional intial conditions by using the same ininitial condition for the Chlorine species in each layer:
 \begin{eqnarray}
 q_{Cl}&=& \\
 q_{Cl2}&=&
 \end{eqnarray}
+See Figure \ref{fig:terminator_cl_init.pdf}.
+
 As a diagnostic for Cl$_y$ conservation we used the average column integrated Cl$_y$
 \begin{equation}
 <q_{Cly}>=\frac{\int q_{Cly}\, dz}{\int dz}=\frac{\int q_{Cly}\, dp}{\int dp},
@@ -325,6 +332,11 @@ The exact solution is that $q_{Cly}$ remains constant in time:
 \begin{equation}
 q_{Cly}(t)=q_{Cly}(t=0)=4.0\times 10^{-6}\, kg/kg.
 \end{equation}
+\begin{figure}[tb]
+\center\includegraphics[width=\linewidth]{terminator_cl_init.pdf}
+  \caption{Contour plots of the steady-state solutions, assuming no flow, for Cl (left) and Cl$_2$ (right), respectively, computed from initial conditions $\mathrm{Cl}=4.0\times 10^{-6}$ and $\mathrm{Cl}_2=0$.}\label{fig:terminator_cl_init.pdf}
+\end{figure} 
+
 
 The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
 
