@@ -304,45 +304,146 @@ q(\lambda, \varphi, \eta) &=& \left\{ \begin{array}{ll} \displaystyle q_0 \exp\B
 \end{eqnarray} The functional form of $q$ and its parameters were inspired by observations. This moisture fields leads to maximum relative humidities around 85\% in the lower levels of the midlatitudes.
 
 Note that the moist temperature is colder than the temperature one would obtain with $q = 0$. However, note that in the moist case the virtual temperature and moist pressure determine the strength of the pressure gradient term in the momentum equations. Since these are identical to the temperature and pressure in the dry case, the forcing by the pressure gradient term is the same in both the dry and moist variant of the baroclinic wave. The moist variant of the baroclinic wave without the temperature forcing from large-scale condensation should lead to almost identical results when compared to the dry version. Very small variations are expected since the moisture gets independently transported as a passive tracer in this case and some models utilize the moist variant of the physical constant $c_p$. If possible, the dry $c_p$ should be used. Comparing the evolution of the dry baroclinic wave to its moist variant (without large-scale condensation) can serve as a first sensibility check.
-
+%
+%
+%
+%
+%
 \subsection{Terminator `toy'-chemistry}
-The terminator `toy'-chemistry is presented in \cite{LCLVT2015GMD} and mimics photolysis-driven processes near the solar terminator. Two passive{\footnote{i.e. tracer does not feed back on the flow}} tracers, Cl and Cl$_2$, that are chemically reactive are transported. The sources and sinks are given by a simple, but non-linear, `toy' chemistry. This chemistry mimics photolysis-driven processes near the solar terminator.  As a result, strong gradients in the spatial distribution of the species develop near the edge of the terminator. Despite the large spatial variations in Cl and Cl$_2$ the weighted sum Cl$_y$=Cl+2Cl$_2$ should always be preserved in any flow field.  The terminator test demonstrates how well the advection/transport scheme preserves linear correlations. Physics-dynamics coupling can also be studied with this test.
+The terminator `toy'-chemistry is presented in \cite{LCLVT2015GMD} and mimics photolysis-driven processes near the solar terminator. Two passive{\footnote{i.e. tracers do not feed back on the flow}} tracers, Cl and Cl$_2$, that are chemically reactive are transported. The sources and sinks are given by a simple, but non-linear, `toy' chemistry. As a result, strong gradients in the spatial distribution of the species develop near the edge of the terminator. Despite the large spatial variations in Cl and Cl$_2$ the weighted sum Cl$_y$=Cl+2Cl$_2$ should always be preserved in any flow field (if the initial condition for Cl$_y$ is constant). An overview of the `toy' terminator chemistry is given in Appendix \ref{sec:ToyChemistry}. The terminator test demonstrates how well the advection/transport scheme and/or physics-dynamics coupling preserves linear correlations.
+
+The initial conditions for Cl and Cl$_2$ (in terms of mixing ratios $q_{Cl}$ and $q_{Cl2}$, respectively) are the steady-state solutions to the terminator chemistry with no flow \cite{LCLVT2015GMD} (see Figure \ref{fig:terminator-2d-se-day0}):
 \begin{figure}[t]
-\includegraphics[width=\linewidth]{terminator_reaction_rates.pdf}
-\caption{Contour plot of the terminator-`like' reaction coefficient $k_1(\lambda,\theta)$ where $\lambda$ and $\theta$ are longitude and latitude, respectively.}
-\label{fig:k1}
+\includegraphics[width=\linewidth]{terminator-2d-se-day0.pdf}
+\caption{Contour lines of $<q_{Cl}>/(4.0\times 10^{-6})$, (upper left), $<q_{Cl2}>/(4.0\times 10^{-6})$ (upper right), $<q_{Cly}>$ (lower left) and surface pressure (lower right) at day 0 (initial conditions).}
+\label{fig:terminator-2d-se-day0}
 \end{figure}
-
-An overview of the terminator chemistry is given in \ref{sec:ToyChemistry}. Fortran subroutines that, given $(\lambda,\theta)$ will return the tendencies for $q_{Cl}$ (mixing ratio) and $q_{Cl2}$ (mixing ratio), are provided as supplemental material in \cite{LCLVT2015GMD}. The initial conditions for Cl and Cl$_2$ in \cite{LCLVT2015GMD} are for a two-dimensional transport problem on the sphere. We extend the two-dimensional intial conditions by using the same ininitial condition for the Chlorine species in each layer:
 \begin{eqnarray}
-q_{Cl}&=& \\
-q_{Cl2}&=&
+q_{Cl}(\lambda,\theta,z,t=0)&=&D-r, \\
+q_{Cl2}(\lambda,\theta,z,t=0)&=&\frac{1}{2}\left( q_{Cly} - D + r\right),
 \end{eqnarray}
-See Figure \ref{fig:terminator_cl_init.pdf}.
+where $q_{Cly}=4.0\times 10^{-6}$kg/kg,
+\begin{align}
+ r &= \frac{k_1}{4 k_2}, \\
+ D &= \sqrt{r^2 + 2 r q_{Cly}},
+\end{align}
+and reaction coefficients $k_1$ and $k_2$ are given in appendix \ref{sec:ToyChemistry} (equations \eqref{app:term_k1} and \eqref{app:term_k2}). 
 
-As a diagnostic for Cl$_y$ conservation we used the average column integrated Cl$_y$
+The forcing terms are computed analytically (assuming no flow) over a (physics/chemistry) time-step $\Delta t$:
 \begin{equation}
-<q_{Cly}>=\frac{\int q_{Cly}\, dz}{\int dz}=\frac{\int q_{Cly}\, dp}{\int dp},
+F_{Cl}^n= - L_{\Delta t} \frac{ (q_{Cl}^n - D + r ) (  {q_{Cl}}^n  + D + r  ) }{ 1+e^{-4 k_2 D \Delta t} + \Delta t L_{\Delta t} (q_{Cl}^n + r )  }.
 \end{equation}
-where
+where $q_{Cl}^n$ is the value of $q_{Cl}$ at the beginning of the n'th time step and
 \begin{equation}
-q_{Cly}=q_{Cl}+2q_{Cl2}.
+  L_{\Delta t} = 
+  \left\{ 
+     \begin{array}{cc}  
+          \frac{1-e^{-4 k_2 D \Delta t}}{D \Delta t}  &\mbox{if }  D > 0 \\[1ex]
+          4k_2 &\mbox{if } D = 0.
+      \end{array} 
+   \right. \label{eq:linvsexp}
 \end{equation}
-The exact solution is that $q_{Cly}$ remains constant in time:
+and by conservation,
 \begin{equation}
-q_{Cly}(t)=q_{Cly}(t=0)=4.0\times 10^{-6}\, kg/kg.
+F_{\mathrm{Cl}_2  }^n = -\frac{1}{2} F_{\mathrm{Cl}  }^n .
 \end{equation}
+In implementation, $L_{\Delta t} $ needs some care.  As $4 k_2 D \Delta t$ approaches machine precision, it is useful to simply use the formula for $D=0$ rather than the expression for $D>0$. The chemistry/physics updated mixing ratios are given by
+\begin{eqnarray}
+q^n_{Cl}+\Delta t\, F_{Cl}^n,\\
+q^n_{Cl2}+\Delta t\, F_{Cl2}^n.
+\end{eqnarray}
+In terms of Fortran code the analytical forcing is given by:
+\begin{verbatim}
+  ! dt is size of physics time step
+  cly = cl + 2.0*cl2
+
+  r = k1 / (4.0*k2)
+  d = sqrt( r*r + 2.0*r*cly )
+  e = exp( -4.0*k2*d*dt )
+
+  if( abs(d*k2*dt) .gt. 1e-16 )
+    el = (1.0-e) / (d*dt)
+  else
+    el = 4.0*k2
+  endif
+
+  f_cl  = -el * (cl-d+r) * (cl+d+r) / (1.0 + e + dt*el*(cl+r))
+  f_cl2 = -f_cl / 2.0
+\end{verbatim}
+The reaction rates are defined by
+\begin{verbatim}
+  ! k1 and k2 are reaction rates
+  k1_lat_center =  20.0 ! degrees
+  k1_lon_center = 300.0 ! degrees
+  k1 = max(0.d0,sin(lat)*sin(k1_lat_center) 
+           + cos(lat)*cos(k1_lat_center)*cos(lon-k1_lon_center))
+  k2 = 1.0
+\end{verbatim}
+The initial condition is defined by
+\begin{verbatim}
+  cly = 4.0e-6
+
+  r = k1 / (4.0*k2)
+  d = sqrt( r*r + 2.0*cly*r )
+
+  cl = d-r
+  cl2 = cly / 2.0 - (d-r) / 2.0
+\end{verbatim}
+Fortran subroutines that, given $(\lambda,\theta)$ will return the tendencies for $q_{Cl}$ (mixing ratio) and $q_{Cl2}$ (mixing ratio), are provided as supplemental material in \cite{LCLVT2015GMD}. Similarly for the forcing terms.
+
+The `toy' terminator chemistry test here uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) based on the moist setup and the flow will transport the two species that interact non-linearly with each other through the toy chemistry. A physics time-step of 30 minutes and 15 minutes, respectively, is used. Note that if the user has the baroclinic wave setup the only additional work is to initialize two tracers and implement the chemistry. Example solutions are shown for HOMME (High-Order Method Modeling Environment) \cite{DetAl2012IJHPCA} spectral elements and HOMME-CSLAM \cite{LetAl2016MWR}. The latter model is based on CSLAM \cite{LNU2010JCP} transport of tracers consistently coupled with spectral element dynamics.
+
+\subsubsection{Diagnostics}
+If the initial conditions for $q_{Cl}$ and $2q_{Cl2}$ add up to a constant (as is the case in this setup) then no matter how the individual species evolve the weighted sum $q_{Cly}=q_{Cl}+2q_{Cl2}$ should be constant in space and time. Hence the analytical solution for $q_{Cly}$ is known. The terminator chemistry preserves the linear relationship between $q_{Cl}$ and $q_{Cl2}$ so the only causes for this relationship to break are:
+\begin{itemize}
+\item the transport operator (usually the limiter/filter) does not exactly preserve linear relations, and/or,
+\item physics-dynamics coupling breaks the relationship (see, e.g., Figure \ref{fig:terminator-diags}).
+\end{itemize}
+The following diagnostics are used in this test case:
+\begin{itemize}
+\item Average column integrated mixing ratio (two-dimensional variable):
+\begin{equation}
+<q>=\frac{\int_{z=0}^{z_{top}} q\, dz}{\int_{z=0}^{z_{top}} dz}.
+\end{equation}
+where $q=q_{Cl},q_{Cl2}$. The global integrals should be computed consistently with the numerical method (preferably `inline' in the source code on the native grid and not using interpolated data).
+\item $\ell_2(t)$, $\ell_\infty(t)$ and relative mass change $\Delta M(t)$ error norms for Cl$_y$:
+\begin{align}
+\ell_2(t)&=\frac{\sqrt{\int_{z=0}^{z_{top}}\left(<q_{Cly}>-4.0\times 10^{-6}\right)^2 dz}}{\sqrt{\int_{z=0}^{z_{top}}\left(4.0\times 10^{-6}\right)^2 dz}},\\
+\ell_\infty(t)&=\frac{\max_{\text{all }\lambda, \theta} |<q_{Cly}>-4.0\times 10^{-6}|}{4.0\times 10^{-6}},\\
+\Delta M(t)&=\frac{\int_{z=0}^{z_{top}}q_{Cly}dz-M_0}{M_0}
+\end{align}
+respectively, where
+\begin{equation}
+<q_{Cly}>=<q_{Cl}+2q_{Cl2}>.
+\end{equation}
+and $M_0$ is the initial mass of Cl$_y$
+\begin{equation}
+M_0=\int_{z=0}^{z_{top}}4.0\times 10^{-6}dz.
+\end{equation}
+\end{itemize}
+Note that if the physics-dynamics coupling procedure breaks $Cl_y$ conservation it can be very subtle but shows in the $\Delta M(t)$ diagnostic (see, e.g., Figure \ref{fig:terminator-diags}).
+%\begin{equation}
+%q_{Cly}=q_{Cl}+2q_{Cl2}.
+%\end{equation}
+%The exact solution is that $q_{Cly}$ remains constant in time:
+%\begin{equation}
+%q_{Cly}(t)=q_{Cly}(t=0)=4.0\times 10^{-6}\, kg/kg.
+%\end{equation}
+
+
+
+
+
+
 \begin{figure}[tb]
-\center\includegraphics[width=\linewidth]{terminator_cl_init.pdf}
-  \caption{Contour plots of the steady-state solutions, assuming no flow, for Cl (left) and Cl$_2$ (right), respectively, computed from initial conditions $\mathrm{Cl}=4.0\times 10^{-6}$ and $\mathrm{Cl}_2=0$.}\label{fig:terminator_cl_init.pdf}
+\center\includegraphics[width=\linewidth]{terminator_diags-t_phys900.pdf}
+\center\includegraphics[width=\linewidth]{terminator_diags-t_phys1800.pdf}
+  \caption{Global error norms $\ell_2(t)$ (column 1), $\ell_\infty(t)$ (column 2) and relative mass change $\Delta M(t)$ (column 3) for $q_{Cly}$ for HOMME  (row 1 and 3) and HOMME-CSLAM  (row 2 and 4) with physics/chemistry time-step of 15 minutes (row 1 and 2) and 30 minutes (row 3 and 4), respectively. The non-conservation of Cl$_y$ mass ($\Delta M(t)$) for physics time-step of 30 minutes is due to physics-dynamics coupling in which the tendencies are altered if they result in negative mixing ratios. For HOMME-CSLAM this happens at one point around day 16 and 18, respectively, whereas it happens frequently (in time and space) for HOMME.}\label{fig:terminator-diags}
 \end{figure} 
 
 
-The terminator physics test uses the baroclinic wave initialization (described in section \ref{sec:baroclinic_wave}) and in conjunction with the toy chemistry module described in Appendix \ref{sec:ToyChemistry}.
 
-
-
-\cite{LCLVT2015GMD}
+%\cite{LCLVT2015GMD}
 %\subsection{Grid spacings, simulation time, output and diagnostics}
 %
 %\begin{itemize}
@@ -361,7 +462,27 @@ The terminator physics test uses the baroclinic wave initialization (described i
 \item Plots of minimum surface pressure over the duration of the simulation for both dry and moist configurations.
 \item Experiments could address the coupling frequency between the dynamics and physics.
 \item A variable resolution simulation should be performed that (a) studies the effect of the baroclinic wave transitioning from coarse resolution to fine resolution and (b) studies the effect of enhanced resolution near the front.
+\item Terminator chemistry (use physics time-step of 30 minutes and 15 minutes): 
+\begin{itemize}
+\item Please plot contour lines for $<q_{Cl}>/(4.0\times 10^{-6})$ at day 9. Contour interval must be 0.1 with zero contour. Please offset the zero contour \verb+-1.0E-12+ to avoid contouring round-off undershoots. Contour levels used in Figure \ref{fig:terminator-2d-se} are\\
+(\verb+-0.1,-1.0E-12,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2+)
+\item Please plot contour lines for $<q_{Cl2}>/(4.0\times 10^{-6})$ at day 9. Contour interval must be 0.04 with round-off offset zero contour.  Contour levels used in Figure \ref{fig:terminator-2d-se} are\\
+(\verb+-0.04,-1.0E-12,0.04,0.08,0.12,0.16,0.20,0.24,0.28,+\\
+\verb+0.32,0.36,0.40,0.44,0.48+)
+\item Please plot contour lines for $<q_{Cly}>/(4.0\times 10^{-6})$ at day 9. Contour interval must be 0.04 (or 0.02 or 0.01 depending on your data) excluding the 1.0 contour but symmetric about 1.0. Contour levels used in Figure \ref{fig:terminator-2d-se} are\\
+(\verb+0.78,0.82,0.86,0.90,0.94,0.98,1.02,1.06,1.1,1.14,1.18,1.22,1.24,+
+\verb+1.08,1.12,1.16,1.20+)
+\item Please plot global error norms $\ell_2(t)$, $\ell_\infty(t)$ and relative mass change $\Delta M(t)$ for $q_{Cly}$ as a function of time from day 0 to 30 preferably with 3 hourly time spacing. Use vertical axis adjusted to your data. See example on Figure \ref{fig:terminator-diags}.
 \end{itemize}
+\end{itemize}
+
+\begin{figure}[t]
+\includegraphics[width=0.9\linewidth]{terminator-2d-se-day9.pdf}
+\includegraphics[width=0.9\linewidth]{terminator-2d-cslam-day9.pdf}
+\caption{Upper panel of 4 plots is contour lines of $<q_{Cl}>/(4.0\times 10^{-6})$, (upper left), $<q_{Cl2}>/(4.0\times 10^{-6})$ (upper right), $<q_{Cly}>$ (lower left) and surface pressure (lower right) at day 9 simulated with HOMME at approximately $1^\circ$ resolution (30x30 elements on each cubed-sphere panel with 4x4 quadrature points in each element). Lower panel of 4 plots is the same as the upper panel but simulated with HOMME-CSLAM with 3x3 control volumes within each element. The results are based on the moist baroclinic wave setup (with no moist processes) and a physics-coupling time-step of 15 minutes.}
+\label{fig:terminator-2d-se}
+\end{figure}
+
 
 \clearpage
 
@@ -690,7 +811,7 @@ V_r = 36349(\rho q_r)^{0.1346}\left(\frac{\rho}{\rho_0}\right)^{-\frac{1}{2}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Toy Chemistry} \label{sec:ToyChemistry}
+\section{`Toy' Chemistry} \label{sec:ToyChemistry}
 
 The toy chemistry module represents a simple photolysis-driven chemical reaction that incorporates combination and the dissociation of a chemical species:
 \begin{align}
@@ -703,7 +824,7 @@ Observe that the total number of molecules of the chemical species are conserved
 Cl_T=Cl+2 Cl_2.
 \end{equation}  Representing the mixing ratios of these species as $q_{Cl}$ and $q_{Cl2}$, we can define the total mixing ratio of Chlorine atoms as
 \begin{equation}
-q_{Cl,T} = q_{Cl} + 2 q_{Cl2}.
+q_{Cly} = q_{Cl} + 2 q_{Cl2}.
 \end{equation}
 
 The differential equations describing the evolution of $Cl$ and $Cl_2$ under this reaction take the form
@@ -712,15 +833,15 @@ The differential equations describing the evolution of $Cl$ and $Cl_2$ under thi
 \frac{Dq_{Cl2}}{Dt} &= -k_1 q_{Cl2} + k_2 q_{Cl}^2,
 \end{align} where $D/Dt$ denotes the Lagrangian derivative.  Observe that the total mixing ratio of Chlorine atoms then satisfies
 \begin{equation}
-\frac{Dq_{Cl,T}}{Dt} = \frac{Dq_{Cl}}{Dt} + 2 \frac{Dq_{Cl2}}{Dt} = 0,
+\frac{Dq_{Cly}}{Dt} = \frac{Dq_{Cl}}{Dt} + 2 \frac{Dq_{Cl2}}{Dt} = 0,
 \end{equation} and so the total mixing ratio of Chlorine is held constant.
 
 The two reaction rate coefficient  $k_1$ and $k_2$, representing the the photolytic dissociation and recombination of Chlorine gas are defined as
 \begin{align}
-k_1(\lambda,\theta)&= \mbox{max} \left[ 0,\sin\theta\sin\theta_c+\cos\theta\cos\theta_c
+k_1(\lambda,\theta)&= \mbox{max} \left[ 0,\sin\theta\sin\theta_c+\cos\theta\cos\theta_c, \label{app:term_k1}
 \cos(\lambda-\lambda_c) \right] \\
-k_2(\lambda,\theta)&=1,
-\end{align} where $(\lambda_c, \theta_c)$ denote the sub-solar point on the Earth's surface.
+k_2(\lambda,\theta)&=1,\label{app:term_k2}
+\end{align} where $(\lambda_c, \theta_c)=(20^\circ N, 300^\circ E)$ denote the sub-solar point on the Earth's surface.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
