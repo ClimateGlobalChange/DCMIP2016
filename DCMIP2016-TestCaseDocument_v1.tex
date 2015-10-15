@@ -28,7 +28,7 @@
 
 \title{Dynamical Core Model Intercomparison Project (DCMIP2016) \\
  Test Case Document}
-\author{Paul Aaron Ullrich \\Antonin Verlet-Banide\\ Christiane Jablonowski \\ Kevin Reed \\ Colin Zarzycki \\ Peter Hjort Lauritzen \\ Ramachandran D. Nair \\ James Kent \\ \vspace{3cm} DCMIP Summer School: June 2016}
+\author{Paul Aaron Ullrich \\Antonin Verlet-Banide\\ Christiane Jablonowski \\ Kevin A. Reed \\ Colin Zarzycki \\ Peter Hjort Lauritzen \\ Ramachandran D. Nair \\ James Kent \\ \vspace{3cm} DCMIP Summer School: June 2016}
 
 \maketitle
 
@@ -58,9 +58,8 @@ The set of test cases collected in this document has been developed for the 2016
 \hline \multicolumn{2}{l}{Tier 1 Test Cases (Required)} \T \B \\
 \hline 
 1-1 \T & Moist baroclinic wave with terminator chemistry \\
-1-2 \T & Idealized Tropical cyclone \\
+1-2 \T & Idealized tropical cyclone \\
 1-3 \T & Mesoscale storm \\
-%1-4 \T & Steady-state Terminator chemistry (pure advection) \\
 \hline \multicolumn{2}{l}{Tier 2 Test Cases (Optional)} \T \B \\  \hline 
 2-1 \T \B & Moist Held-Suarez test  \\ \hline
 \hline 
@@ -126,8 +125,8 @@ $c_p$ & Specific heat capacity of dry air at constant pressure & $1004.5\ \mbox{
 $c_v$ & Specific heat capacity of dry air at constant volume & $717.5\ \mbox{J}\ \mbox{kg}^{-1}\ \mbox{K}^{-1}$ \\
 $R_d$ & Gas constant for dry air & $287.0\ \mbox{J}\ \mbox{kg}^{-1}\ \mbox{K}^{-1}$ \\
 $R_\nu$ & Gas constant for water vapor & $461.5$ J kg$^{-1}$ K$^{-1}$ \\
-$\kappa$ & Ratio of $R_d$ to $c_p$ & $R_d/c_p = 2/7$ \\
-$\varepsilon$ & Ratio of $R_d$ to $R_\nu$ & $R_d/R_\nu \approx 0.622$ \\
+$\kappa$ & Ratio of $R_d$ to $c_p$ & $2/7$ \\
+$\varepsilon$ & Ratio of $R_d$ to $R_\nu$ & $0.622$ \\
 $M_v$ & Constant for virtual temperature conversion & $0.608$ \\
 $\rho_{water}$ & Density of water & 1000 kg m$^{-3}$ \\
 \hline 
@@ -166,6 +165,7 @@ Most prominently these include the scaling of the radius, the rotational speed, 
 \item In case of rotating planets: multiply the Earth's angular velocity $\Omega_{\tiny \mbox{ref}}$ by the factor $X$ to obtain the rescaled angular speed $\Omega = \Omega_{\tiny \mbox{ref}}X$. This guarantees that the characteristics of Rossby waves are comparable in unscaled and scaled model experiments since the Rossby number stays constant.
 \item In case of explicit diffusion of type $K_{2k}\nabla^{2k}$ with a prescribed diffusion coefficient $K_{2k}$ (and $k=1,2\ldots$) divide $K_{2k}$ by the factor $X^{2k-1}$. This accounts for a reduction of the e-folding time $\tau$  and the horizontal grid spacing $\Delta x$ according to the relationship $\frac{(\Delta x)^{2k}/X^{2k}}{\tau/X}$. The $K_{2k}$ diffusion coefficient is typically based on such a relationship. Note that some models might provide an automatic scaling of the diffusion coefficients according to the actual dynamics time step and grid spacing. If a model applies Rayleigh friction as a sponge near the model top, the friction coefficient needs to be multiplied by X. Again, this corresponds to a reduction of the e-folding frictional time scale $\frac{1}{\tau/X} = \frac{X}{\tau}$ in small-planet experiments.
 \item If physical forcing mechanisms are present on the right hand side of the equations of motion the strengths of the physical forcing must be increased (multiplied) by the factor X. This will not be applicable to the test cases presented here unless Rayleigh friction is considered as such a forcing as outlined above.
+\item Any deviations from this prescription should be documented.  For example, some modeling groups may have a prescribed diffusion coefficient that depends on grid resolution that can be used in place of the scaled diffusivity described above.
 \end{itemize}
 
 \subsection{Notes on the Requested Model Output}
@@ -178,7 +178,7 @@ We specify details of the netCDF requirements in Appendix~\ref{sec:netcdf} and w
 Most DCMIP models utilize non-orthogonal computational grids like cubed-sphere grids, icosahedral grids, hexagonal grid, Voronoi grids or Yin-Yang grids. Among the mix of DCMIP GCMs are even models that provide provisions for variable-resolution grids. We encourage the use of the variable-resolution configurations as an additional test option whenever possible.
 This raises questions concerning the desired representation of the data in the netCDF output files. 
 
-If models on non-traditional (non latitude-longitude) grids are used, we ask for two output files that represent the identical model run. The first output file should be written on the native computational grid without any interpolations. In addition, most models will likely provide built-in provisions for interpolated output to a regular (equidistant in degrees) latitude-longitude grid. We therefore also ask for a second output file that represents the data on model levels on the interpolated latitude-longitude grid. We ask for co-located  (Arakawa-A type) data on the interpolated grid regardless of the GCM's staggering options. The grid spacing of the interpolated grid should be comparable to the actual resolution of the model run, which might be for example $1^\circ \times 1^\circ$. Using this example, the interpolated grid will have $180 \times 360$ horizontal grid points if the equator and pole points are not part of the interpolated grid. If the equator and pole points are included it yields $181 \times 360$ horizontal grid points. If models can freely choose their interpolation points, we suggest the $180 \times 360$ configuration for the given example. If models need to include the equator and pole points, we ask for the $181 \times 360$ horizontal grid. 
+If models on non-traditional (non latitude-longitude) grids are used, we ask for two output files that represent the identical model run. The first output file should be written on the native computational grid without any interpolations. In addition, most models will likely provide built-in provisions for interpolated output to a regular (equidistant in degrees) latitude-longitude grid. We therefore also ask for a second output file that represents the data on model levels on the interpolated latitude-longitude grid. We ask for co-located  (Arakawa-A type) data on the interpolated grid regardless of the GCM's staggering options. The grid spacing of the interpolated grid should be comparable to the actual resolution of the model run, which might be for example $1^\circ \times 1^\circ$. Using this example, the interpolated grid will have $180 \times 360$ horizontal grid points if the equator and pole points are not part of the interpolated grid (equally spaced in the longitudinal and latitudinal directions). If the equator and pole points are included it yields $181 \times 360$ horizontal grid points. The $180 \times 360$ configuration is preferred for model intercomparison purposes.
 
 Models on regular latitude-longitude or Gaussian grids should only provide a single output file using their native horizontal resolution and model levels. If reduced Gaussian grids are utilized a second file on the full Gaussian grid is requested. 
 If models are run with variable-resolution grids, we leave the choice of the best suitable interpolation grid to the modeling group. We ask to write all output variables for each experiment to the same file.
@@ -625,6 +625,12 @@ v(\lambda,\varphi,z) &=& \frac{v_T(\lambda,\varphi,z) \, d_2}{d} \,.
 \end{eqnarray}
 A small $\epsilon = 10^{-25}$ value avoids divisions by zero.  The vertical velocity is set to zero.
 
+\ \\
+\noindent \begin{tabular}{|p{\textwidth}|}
+\hline \textbf{Note:} We are currently investigating a test case specification that places the idealized tropical cyclone on an $f$-plane.  This configuration would remove issues associated with $\beta$ drift of the cyclone and allow for a more direct intercomparison of the simulated storm. \\
+\hline
+\end{tabular}
+
 \subsection{Grid spacings, simulation time, output and diagnostics}
 
 \begin{itemize}
@@ -633,7 +639,6 @@ A small $\epsilon = 10^{-25}$ value avoids divisions by zero.  The vertical velo
 \item Experiments could address the coupling frequency between the dynamics and physics.
 \item A variable resolution simulation should be performed that (a) studies the effect of the tropical cyclone transitioning from fine resolution to coarse resolution and (b) high resolution simulations down to 0.125$^\circ$ over the tropical cyclone.
 \end{itemize}
-
 
 \clearpage
 
@@ -733,6 +738,12 @@ To initiate convection, a thermal perturbation is introduced in the initial pote
 \begin{equation}
 R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lambda_p, \varphi_p)}{r_p} \right)^2 + \left( \frac{z - z_c}{z_p} \right)^2 \right]^{1/2}.
 \end{equation}
+
+\ \\
+\noindent \begin{tabular}{|p{\textwidth}|}
+\hline \textbf{Note:} An additional iterative step will be required here to bring the potential temperature perturbation into hydrostatic balance.  Without this additional iteration, large vertical velocities will be generated as the model rapidly adjusts to hydrostatic balance. \\
+\hline
+\end{tabular}
 
 \subsection{Grid spacings, simulation time, output and diagnostics}
 
