@@ -318,7 +318,7 @@ Note that the moist temperature is colder than the temperature one would obtain 
 \subsection{Terminator `toy'-chemistry}
 The terminator `toy'-chemistry is presented in \cite{LCLVT2015GMD} and mimics photolysis-driven processes near the solar terminator. Two passive{\footnote{i.e. tracers do not feed back on the flow}} tracers, Cl and Cl$_2$, that are chemically reactive are transported. The sources and sinks are given by a simple, but non-linear, `toy' chemistry. As a result, strong gradients in the spatial distribution of the species develop near the edge of the terminator. Despite the large spatial variations in Cl and Cl$_2$ the weighted sum Cl$_y$=Cl+2Cl$_2$ should always be preserved in any flow field (if the initial condition for Cl$_y$ is constant). An overview of the `toy' terminator chemistry is given in Appendix \ref{sec:ToyChemistry}. The terminator test demonstrates how well the advection/transport scheme and/or physics-dynamics coupling preserves linear correlations.
 
-The initial conditions for Cl and Cl$_2$ (in terms of mixing ratios $q_{Cl}$ and $q_{Cl2}$, respectively) are the steady-state solutions to the terminator chemistry with no flow \cite{LCLVT2015GMD} (see Figure \ref{fig:terminator-2d-se-day0}):
+The initial conditions for Cl and Cl$_2$ (in terms of {\bf{dry}} mixing ratios $q_{Cl}$ and $q_{Cl2}$, respectively) are the steady-state solutions to the terminator chemistry with no flow \cite{LCLVT2015GMD} (see Figure \ref{fig:terminator-2d-se-day0}):
 \begin{figure}[t]
 \includegraphics[width=\linewidth]{terminator-2d-se-day0.pdf}
 \caption{Contour lines of $<q_{Cl}>/(4.0\times 10^{-6})$, (upper left), $<q_{Cl2}>/(4.0\times 10^{-6})$ (upper right), $<q_{Cly}>$ (lower left) and surface pressure (lower right) at day 0 (initial conditions).}
@@ -333,7 +333,7 @@ where $q_{Cly}=4.0\times 10^{-6}$kg/kg,
  r &= \frac{k_1}{4 k_2}, \\
  D &= \sqrt{r^2 + 2 r q_{Cly}},
 \end{align}
-and reaction coefficients $k_1$ and $k_2$ are given in appendix \ref{sec:ToyChemistry} (equations \eqref{app:term_k1} and \eqref{app:term_k2}). 
+and reaction coefficients $k_1$ and $k_2$ are given in appendix \ref{sec:ToyChemistry} (equations \eqref{app:term_k1} and \eqref{app:term_k2}). Please note that the mixing ratios are dry, i.e. the ratio between the density of the species and the density of dry air. 
 
 The forcing terms are computed analytically (assuming no flow) over a (physics/chemistry) time-step $\Delta t$:
 \begin{equation}
