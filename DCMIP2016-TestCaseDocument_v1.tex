@@ -907,7 +907,11 @@ As described in \cite{reed2012idealized}, the surface fluxes can be written as
 \frac{\partial T_a}{\partial t} &=& \frac{C_H \vert \vec{v}_a \vert (T_s-T_a)}{z_a} \label{sft} \\
 \frac{\partial q_a}{\partial t} &=& \frac{C_E \vert \vec{v}_a \vert(q_{sat,s}-q_a)}{z_a}. \label{sfq}
 \end{eqnarray}
-We note that the wind at the surface is taken to be zero and therefore does not appear explicitly in (\ref{sfu}).  In these equations $T_s$  denotes the prescribed sea surface temperature (SST) and $q_{sat,s}$ is the saturation specific humidity defined by (\ref{qsatcalc}) and computed with the SST value.
+We note that the wind at the surface is taken to be zero and therefore does not appear explicitly in (\ref{sfu}).  In these equations $T_s$  denotes the prescribed sea surface temperature (SST) and $q_{sat,s}$ is the saturation specific humidity defined by the Clausius-Clapeyron equation
+\begin{eqnarray} \label{qsatcalc}
+q_{sat}(p) \approx \varepsilon\frac{e_s(T_s)}{p} \approx \frac{\varepsilon}{p}e^{*}_{0}e^{-(L/R_\nu)[(1/T_s)-(1/T_0)]},
+\end{eqnarray}
+where $e^{*}_{0}$ ($=610.78$ Pa) is the saturation vapor pressure at $T_0=273.16$ K. 
 
 The final form of the surface fluxes will vary for models with other choices of prognostic variables. For example, if potential temperature $\Theta_a$ is used (\ref{sft}) takes the form
 \begin{eqnarray}
@@ -942,24 +946,54 @@ The forcing by the planetary boundary layer is described in \cite{reed2012ideali
 \end{eqnarray}  Potential temperature, as opposed to temperature, is used in the boundary layer parameterization because the vertical profile of the potential temperature is a suitable indicator of static stability.  This adds the time rate of change equation
 \begin{eqnarray}
 \frac{\partial \Theta}{\partial t} &=& - \frac{1}{\rho} \frac{\partial \rho \ \overline{w'\Theta'}}{\partial z}.
-\end{eqnarray}  Here $u'$, $v'$, $w'$, $\Theta'$ and $q'$ symbolize the deviations of the zonal velocity, meridional velocity, vertical velocity, potential temperature and specific humidity from their averages, respectively. The average is indicated by an overbar.  The eddy turbulence surface momentum fluxes on the RHS of (\ref{eqturb})-(\ref{eqturb_last}) are approximated by the bulk aerodynamic formulae in kinematic units
-\begin{eqnarray} \label{usurfflux}
-\overline{w'u'} &=& -C_d \vert \vec{v} \vert u \\ 
-\overline{w'v'} &=& -C_d \vert \vec{v} \vert v \label{vsurfflux},
-\end{eqnarray} where $C_d$ is again defined by (\ref{eq:DragCoefficient}).  Evaporation occurs at the surface and is similarly described by the kinematic eddy flux of water vapor. It is expressed via the bulk formula for latent heat
-\begin{equation} \label{lhflux}
-\overline{w'q'} = C_E \vert \vec{v} \vert (q_{sat}-q),
-\end{equation}
-where $C_E$ is defined by (\ref{eq:BulkTransferCoefficient}), $q_{sat}$ is again defined by (\ref{qsatcalc}) and $q$ is the specific humidity.  The kinematic eddy sensible heat flux at the surface is defined by the formula
-\begin{equation}
-\overline{w'\Theta'} = C_H \vert \vec{v} \vert (\Theta_{s}-\Theta),
-\end{equation} where $\Theta_{s}$ is the potential temperature at the surface.  Assuming pressure is held constant (which is a common assumption in physical parameterizations), the potential temperature time tendency can be converted back to a temperature tendency of the following form
+\end{eqnarray}  Here $u'$, $v'$, $w'$, $\Theta'$ and $q'$ symbolize the deviations of the zonal velocity, meridional velocity, vertical velocity, potential temperature and specific humidity from their averages, respectively. The average is indicated by an overbar.  Note, assuming pressure is held constant (which is a common assumption in physical parameterizations), the potential temperature time tendency can be converted back to a temperature tendency of the following form
 \begin{eqnarray}
 \frac{\partial T}{\partial t} &=& - \frac{1}{\rho} \left (\frac{p}{p_0} \right )^{\kappa} \frac{\partial \rho \ \overline{w'\Theta'}}{\partial z}.
 \end{eqnarray}
 with the reference pressure $p_0 = 1000$ hPa.
 
+The turbulent mixing is characterized by a constant vertical eddy diffusivity to represent Ekman-like profiles of boundary layers
+\begin{eqnarray}\label{ktheory}
+\overline{w'u'} = -K_m \frac{\partial u}{\partial z} \\
+\overline{w'v'} = -K_m \frac{\partial v}{\partial z} \\
+\overline{w'\Theta'} = -K_E \frac{\partial \Theta}{\partial z} \\
+\overline{w'q'} = -K_E \frac{\partial q}{\partial z}. 
+\end{eqnarray}
+Here, $K_m$ is the eddy diffusivity coefficient for momentum and $K_E$ is the eddy diffusivity coefficient for energy and set equal to that for water vapor. In order to calculate the eddy diffusivity coefficients, the eddy diffusivity is matched to that for the surface flux calculated in Appendix~\ref{sec:OceanSurfaceFluxes} at the lowermost model level.  To allow for a smooth transition above the boundary layer ($p_{top} = 850$ hPa)  the diffusivity coefficients for momentum taper to zero as
+\begin{equation} \label{Kmtaper}
+\begin{array}{ll}
+K_m = C_d \vert \vec{v}_{a} \vert z_a & \mbox{for} \; p > p_{top} \\
+K_m = C_d \vert \vec{v}_{a} \vert z_a \exp \left ( -\left [ \frac{p_{top} - p}{p_{strato}} \right ]^2 \right ) & \mbox{for} \; p \leq p_{top}.
+\end{array}
+\end{equation}
+Here the constant $p_{strato}$ determines the rate of decrease and is set to 100 hPa. $K_E$ is defined by
+\begin{equation}
+\begin{array}{ll}\label{KEtaper}
+K_E = C_E \vert \vec{v}_{a} \vert z_a & \mbox{for} \; p > p_{top} \\
+K_E = C_E \vert \vec{v}_{a} \vert z_a \exp \left ( -\left [ \frac{p_{top} - p}{p_{strato}} \right ]^2 \right ) & \mbox{for} \; p \leq p_{top}.
+\end{array}
+\end{equation}
 We suggest implementing the boundary layer scheme with an implicit temporal discretization to avoid numerical instabilities. The details of this discretization are somewhat complicated, and so we refer to implementation details in Appendix D of \cite{reed2012idealized}. In addition, we supply the DCMIP modeling groups with the complete ``simple-physics'' package as used in the model CAM which can serve as a template routine.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Alternative Planetary Boundary Layer for Tropical Cyclone Test} \label{sec:BryanBoundaryLayer}
+
+An alternative approach for boundary layer mixing has been proposed using a K-profile parameterization formulation for the tropical cyclone test described in Section~\ref{sec:tropical_cyclone}.  The implementation only impacts the manner in which the eddy diffusivity coefficients are calculated. In particular the calculation of $K_m$ in (\ref{Kmtaper}) is replaced with
+\begin{equation} \label{Kmtaper_alt}
+\begin{array}{ll}
+K_m = \kappa u^* z \left ( 1 -  \frac{z}{h} \right )^2 & \mbox{for} \; z \leq h \\
+K_m = 0 & \mbox{for} \; z > h,
+\end{array}
+\end{equation}
+where $\kappa = 0.4$, $u^* = \sqrt{C_d} \vert \vec{v}_{a} \vert$ and $h = 1$ km. $K_E$ in (\ref{KEtaper}) is then defined as
+\begin{equation}
+\begin{array}{ll}\label{KEtaper_alt}
+K_E = \kappa e^* z \left ( 1 -  \frac{z}{h} \right )^2 & \mbox{for} \; z \leq h \\
+K_E = 0 & \mbox{for} \; z > h,
+\end{array}
+\end{equation}
+where $e^* = \sqrt{C_E} \vert \vec{v}_{a} \vert$. This implementation will be used in supplemental simulations of the tropical cyclone test.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
