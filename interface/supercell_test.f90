@@ -1,4 +1,4 @@
-MODULE supercell_test
+MODULE supercell
 
 !=======================================================================
 !
@@ -758,4 +758,4 @@ CONTAINS
 
   END SUBROUTINE
 
-END MODULE supercell_test
+END MODULE supercell
