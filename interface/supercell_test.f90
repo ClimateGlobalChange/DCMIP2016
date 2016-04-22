@@ -2,7 +2,7 @@ MODULE supercell_test
 
 !=======================================================================
 !
-!  Date:  January 13, 2016
+!  Date:  April 22, 2016
 !
 !  Functions for setting up idealized initial conditions for the
 !  Klemp et al. supercell test.  Before sampling the result,
@@ -390,7 +390,6 @@ CONTAINS
 
     ! Sample surface pressure
     CALL supercell_z(lon, lat, 0.d0, ps, thetav, rho, q)
-    ps = p0 * ps**(cp/Rd)
 
     ! Calculate dependent variables
     if (zcoords .eq. 1) then
