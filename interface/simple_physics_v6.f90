@@ -1,6 +1,6 @@
 !-----------------------------------------------------------------------
 !
-!  Date:  April 20, 2016 (Version 6)
+!  Date:  April 26, 2016 (Version 6)
 !
 !  Simple Physics Package
 !
@@ -81,6 +81,7 @@
 !      Included virtual temperature in density calculation in PBL scheme
 !      Also, included the virtual temperature, instead of temperature, for
 !      the calculation of rho in the PBL scheme
+!      (v6_1) Minor specification and generalization fixes.
 !      
 ! Reference: Reed, K. A. and C. Jablonowski (2012), Idealized tropical cyclone
 !            simulations of intermediate complexity: A test case for AGCMs,
@@ -104,6 +105,8 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
    real(r8), intent(in) :: dtime        ! Set model physics timestep
    real(r8), intent(in) :: lat(pcols)   ! Latitude
    integer, intent(in)  :: test         ! Test number
+   logical, intent(in)  :: RJ2012_precip
+   logical, intent(in)  :: TC_PBL_mod
 
 !
 ! Input/Output arguments
@@ -263,27 +266,26 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 !
 ! Calculate hydrostatic height
 !
-     do i=1,ncol
-        dlnpint = (lnpint(i,pver+1) - lnpint(i,pver))
+     do i=1,pcols
+        dlnpint = log(ps(i)) - log(pint(i,pver))  ! ps(i) is identical to pint(i,pver+1), note: this is the correct sign (corrects typo in JAMES paper) 
         za(i) = rair/gravit*t(i,pver)*(1._r8+zvir*q(i,pver))*0.5_r8*dlnpint
         zi(i,pver+1) = 0.0_r8
      end do
 !
 ! Set Initial Specific Humidity
 !
-     qini(:ncol,:pver) = q(:ncol,:pver)
+     qini(:pcols,:pver) = q(:pcols,:pver)
 !
 ! Set Sea Surface Temperature (constant for tropical cyclone)
 ! Tsurf needs to be dependent on latitude for moist baroclinic wave test
 ! Tsurf needs to be constant for tropical cyclone test
 !
      if (test .eq. 1) then ! Moist Baroclinic Wave Test
-        call get_rlat_all_p(lchnk, ncol, lat)
         do i=1,pcols
            Tsurf(i) = (T00 + pi*u0/rair * 1.5_r8 * sin(etav) * (cos(etav))**0.5_r8 *                 &
                      ((-2._r8*(sin(lat(i)))**6 * ((cos(lat(i)))**2 + 1._r8/3._r8) + 10._r8/63._r8)* &
                      u0 * (cos(etav))**1.5_r8  +                                                    &
-                     (8._r8/5._r8*(cos(lat(i)))**3 * ((sin(lat(i)))**2 + 2._r8/3._r8) - pi/4._r8)*rearth*omega*0.5_r8 ))/ &
+                     (8._r8/5._r8*(cos(lat(i)))**3 * ((sin(lat(i)))**2 + 2._r8/3._r8) - pi/4._r8)*a*omega*0.5_r8 ))/ &
                      (1._r8+zvir*q0*exp(-(lat(i)/latw)**4))
 
         end do
@@ -315,13 +317,13 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 ! Calculate Tendencies
 !
       do k=1,pver
-         do i=1,ncol
+         do i=1,pcols
             qsat = epsilo*e0/pmid(i,k)*exp(-latvap/rh2o*((1._r8/t(i,k))-1._r8/T0))
             if (q(i,k) > qsat) then
                tmp  = 1._r8/dtime*(q(i,k)-qsat)/(1._r8+(latvap/cpair)*(epsilo*latvap*qsat/(rair*t(i,k)**2)))
                dtdt(i,k) = dtdt(i,k)+latvap/cpair*tmp
                dqdt(i,k) = dqdt(i,k)-tmp
-               surf_precl(i) = surf_precl(i)+tmp*pdel(i,k)/(gravit*rhow)
+               precl(i)  = precl(i)+tmp*pdel(i,k)/(gravit*rhow)
             end if
          end do
       end do
@@ -329,7 +331,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 ! Update moisture and temperature fields from Larger-Scale Precipitation Scheme
 !
       do k=1,pver
-         do i=1,ncol
+         do i=1,pcols
             t(i,k) =  t(i,k) + dtdt(i,k)*dtime
             q(i,k) =  q(i,k) + dqdt(i,k)*dtime
          end do
@@ -358,10 +360,10 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 !===============================================================================!
 ! Compute magnitude of the wind and drag coeffcients for turbulence scheme
 !
-     do i=1,ncol
+     do i=1,pcols
         wind(i) = sqrt(u(i,pver)**2+v(i,pver)**2)
      end do
-     do i=1,ncol
+     do i=1,pcols
         if( wind(i) .lt. v20) then
            Cd(i) = Cd0+Cd1*wind(i) 
         else
@@ -371,8 +373,8 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 
      if (TC_PBL_mod) then !Bryan TC PBL Modification 
      do k=pver,1,-1
-        do i=1,ncol
-           dlnpint = (lnpint(i,k+1) - lnpint(i,k))
+        do i=1,pcols
+           dlnpint = log(pint(i,k+1)) - log(pint(i,k))
            zi(i,k) = zi(i,k+1)+rair/gravit*t(i,k)*(1._r8+zvir*q(i,k))*dlnpint
            if( zi(i,k) .le. zpbltop) then
               Km(i,k) = kappa*sqrt(Cd(i))*wind(i)*zi(i,k)*(1._r8-zi(i,k)/zpbltop)*(1._r8-zi(i,k)/zpbltop)
@@ -385,7 +387,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
      end do     
      else ! Reed and Jablonowski (2012) Configuration
      do k=1,pver
-        do i=1,ncol
+        do i=1,pcols
            if( pint(i,k) .ge. pbltop) then
               Km(i,k) = Cd(i)*wind(i)*za(i) 
               Ke(i,k) = C*wind(i)*za(i)
@@ -405,7 +407,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 ! Tsurf needs to be dependent on latitude for the
 ! moist baroclinic wave test 
 !===============================================================================
-     do i=1,ncol
+     do i=1,pcols
         qsats = epsilo*e0/ps(i)*exp(-latvap/rh2o*((1._r8/Tsurf(i))-1._r8/T0))
         dudt(i,pver) = dudt(i,pver) + (u(i,pver)/(1._r8+Cd(i)*wind(i)*dtime/za(i))-u(i,pver))/dtime
         dvdt(i,pver) = dvdt(i,pver) + (v(i,pver)/(1._r8+Cd(i)*wind(i)*dtime/za(i))-v(i,pver))/dtime
@@ -423,7 +425,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 ! Calculate Diagonal Variables for Implicit PBL Scheme
 !
       do k=1,pver-1
-         do i=1,ncol
+         do i=1,pcols
             rho = (pint(i,k+1)/(rair*(t(i,k+1)*(1._r8+zvir*q(i,k+1))+t(i,k)*(1._r8+zvir*q(i,k)))/2.0_r8)) 
             CAm(i,k) = rpdel(i,k)*dtime*gravit*gravit*Km(i,k+1)*rho*rho/(pmid(i,k+1)-pmid(i,k))    
             CCm(i,k+1) = pdel(i,k+1)*dtime*gravit*gravit*Km(i,k+1)*rho*rho/(pmid(i,k+1)-pmid(i,k))
@@ -431,7 +433,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
             CC(i,k+1) = rpdel(i,k+1)*dtime*gravit*gravit*Ke(i,k+1)*rho*rho/(pmid(i,k+1)-pmid(i,k))
          end do
       end do
-      do i=1,ncol
+      do i=1,pcols
          CAm(i,pver) = 0._r8
          CCm(i,1) = 0._r8
          CEm(i,pver+1) = 0._r8
@@ -443,7 +445,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
          CFt(i,pver+1) = 0._r8
          CFq(i,pver+1) = 0._r8 
       end do
-      do i=1,ncol
+      do i=1,pcols
          do k=pver,1,-1
             CE(i,k) = CC(i,k)/(1._r8+CA(i,k)+CC(i,k)-CA(i,k)*CE(i,k+1)) 
             CEm(i,k) = CCm(i,k)/(1._r8+CAm(i,k)+CCm(i,k)-CAm(i,k)*CEm(i,k+1))
@@ -458,7 +460,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
 !
 ! First we need to calculate the tendencies at the top model level
 !
-      do i=1,ncol
+      do i=1,pcols
             dudt(i,1)  = dudt(i,1)+(CFu(i,1)-u(i,1))/dtime
             dvdt(i,1)  = dvdt(i,1)+(CFv(i,1)-v(i,1))/dtime
             u(i,1)    = CFu(i,1)
@@ -469,7 +471,7 @@ SUBROUTINE SIMPLE_PHYSICS(pcols, pver, dtime, lat, t, q, u, v, pmid, pint, pdel,
             q(i,1)  = CFq(i,1)
       end do
 
-      do i=1,ncol
+      do i=1,pcols
          do k=2,pver
             dudt(i,k)  = dudt(i,k)+(CEm(i,k)*u(i,k-1)+CFu(i,k)-u(i,k))/dtime
             dvdt(i,k)  = dvdt(i,k)+(CEm(i,k)*v(i,k-1)+CFv(i,k)-v(i,k))/dtime
