@@ -1,5 +1,5 @@
 ;***********************************************
-; plot_mesoscalestorm_init.ncl
+; plot_supercell_init.ncl
 ;***********************************************
 
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"  
@@ -14,13 +14,13 @@ begin
 ; Input parameters
 ;************************************************
 
-  datafilename = "../../../tempestmodel/test/dcmip2016/outMesoscaleStormTest/out.0000-01-01-00000.nc"
+  datafilename = "../../../tempestmodel/test/dcmip2016/outSupercellTest/out.0000-01-01-00000.nc"
 
 ;************************************************
 ; Initialize workspace
 ;************************************************
 
-  wks = gsn_open_wks("eps","plot_mesoscalestorm_init_p2")   
+  wks = gsn_open_wks("eps","plot_supercell_init_p2")   
 
 ;************************************************
 ; Plot resources [options]
@@ -68,6 +68,9 @@ begin
 
   qv = datafile->RhoQv / rho * 1000.0
   copy_VarCoords(rho, qv)
+ 
+  t = t / (1.0 + 0.61 * qv / 1000.0)
+  copy_VarCoords(rho, t)
 
   p = rho * 287.0 * t / 100.0
   copy_VarCoords(rho, p)
@@ -88,7 +91,7 @@ begin
   copy_VarCoords(theta(0,:,:,0), thetap)
 
 ; ---
-  z = lev * 30.0
+  z = lev * 20.0
   p&lev = z
   t&lev = z
   td&lev = z

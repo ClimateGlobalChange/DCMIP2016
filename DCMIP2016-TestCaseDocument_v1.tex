@@ -47,7 +47,7 @@ Email questions to \textbf{dcmip@ucar.edu}
 
 \section*{Overview of the Test Case Suite}
 
-The set of test cases collected in this document has been developed for the 2016 Dynamical Core Model Intercomparison Project (DCMIP2016) in an effort to understand the broad treatment of the equations of motion within a variety of atmospheric General Circulation Models (GCMs). In contrast with the test cases described in the DCMIP2012 and DCMIP2008 test case documents, the suite of test cases that are described here focus on issues related to physics-dynamics coupling, non-hydrostatic scales and modeling systems that support variable resolution.  To better isolate these features, the majority of tests described in this document do not include topographic forcing and emphasize features that have a relatively small spatial footprint relative to the global simulation domain.  The tests proposed here have been drawn from the recent literature on global model intercomparison testing.  To support the integration of these tests into existing models, a collection of initialization routines have been provided that can be used for very quickly setting up the initial conditions.  Augmented Kessler physics routines have also been provided to support simple moisture feedbacks, a boundary layer parameterization and surface friction.  If models provide both a shallow-atmosphere and deep-atmosphere configuration, we recommend the shallow-atmosphere setup to avoid imbalances in the initial conditions. It is further expected that most models will be run under a non-hydrostatic configuration, which will permit a correct solution to the mesoscale storm test.  If models can be configured both as a hydrostatic and non-hydrostatic dynamical core, additional hydrostatic simulations might be conducted to evaluate the direct impact of the hydrostatic approximation.  Table \ref{tab:TestCases} provides an overview of all test cases described in this document.
+The set of test cases collected in this document has been developed for the 2016 Dynamical Core Model Intercomparison Project (DCMIP2016) in an effort to understand the broad treatment of the equations of motion within a variety of atmospheric General Circulation Models (GCMs). In contrast with the test cases described in the DCMIP2012 and DCMIP2008 test case documents, the suite of test cases that are described here focus on issues related to physics-dynamics coupling, non-hydrostatic scales and modeling systems that support variable resolution.  To better isolate these features, the majority of tests described in this document do not include topographic forcing and emphasize features that have a relatively small spatial footprint relative to the global simulation domain.  The tests proposed here have been drawn from the recent literature on global model intercomparison testing.  To support the integration of these tests into existing models, a collection of initialization routines have been provided that can be used for very quickly setting up the initial conditions.  Augmented Kessler physics routines have also been provided to support simple moisture feedbacks, a boundary layer parameterization and surface friction.  If models provide both a shallow-atmosphere and deep-atmosphere configuration, we recommend the shallow-atmosphere setup to avoid imbalances in the initial conditions. It is further expected that most models will be run under a non-hydrostatic configuration, which will permit a correct solution to the supercell test.  If models can be configured both as a hydrostatic and non-hydrostatic dynamical core, additional hydrostatic simulations might be conducted to evaluate the direct impact of the hydrostatic approximation.  Table \ref{tab:TestCases} provides an overview of all test cases described in this document.
 
 \begin{table}[h]
 
@@ -59,7 +59,7 @@ The set of test cases collected in this document has been developed for the 2016
 \hline 
 1-1 \T & Moist baroclinic wave with terminator chemistry \\
 1-2 \T & Idealized tropical cyclone \\
-1-3 \T & Mesoscale storm \\
+1-3 \T & Supercell \\
 \hline \multicolumn{2}{l}{Tier 2 Test Cases (Optional)} \T \B \\  \hline 
 2-1 \T \B & Moist Held-Suarez test  \\ \hline
 \hline 
@@ -193,7 +193,7 @@ We have provided a set of stand-alone Fortran routines that compute the initial 
 \begin{itemize}
 \item \texttt{baroclinic\_wave\_test.f90}
 \item \texttt{tropical\_cyclone\_test.f90}
-\item \texttt{mesoscale\_storm\_test.f90}
+\item \texttt{supercell\_test.f90}
 \end{itemize}
 
 We have also provided a set of stand-alone Fortran routines that compute tendencies associated with the physical parameterizations.  They are named
@@ -239,7 +239,6 @@ $R_p$ & $a / 10$ & Radius of the zonal wind perturbation \\
 %$T_E$ & $310 \ \mbox{K}$ & Temperature at the equator\\
 $\Gamma$ & $0.005\ \mbox{K\ m}^{-1}$ & Temperature lapse rate \\
 $\Delta T$ & $4.8 \times 10^{5}\ \mbox{K}$ & Empirical temperature difference \\
-$K$ & $3$ & Jet width parameter \\
 $\varphi_w$ & $2 \pi / 9$ & Specific humidity latitudinal width parameter $(40^\circ)$\\
 $p_w$ & $340\ \mbox{hPa}$ & Specific humidity vertical pressure width parameter \\
 $q_0$ & $0.018$ kg/kg& Maximum specific humidity amplitude \\
@@ -267,7 +266,7 @@ I_{T}(\varphi) =(\cos \varphi )^K-\frac{K}{K+2}(\cos \varphi )^{K+2},
 \tau_2(z) &= \frac{(K + 2)}{2} \left( \frac{T_E-T_P}{T_E T_P} \right) \left[1-2\left(\frac{z g}{b R_d T_0}\right)^2\right] \exp\left[-\left(\frac{z g}{b R_d T_0}\right)^2\right],
 \end{align} with $T_0 = \tfrac{1}{2} (T_E + T_P)$.  To maintain hydrostatic balance, the pressure is given by:
 \begin{equation}
-p(\varphi, z) = p_0\exp \left[ -\frac{g}{Rd}(\tau_{\text{int},1}(z) -\tau_{\text{int},2}(z) I_T(\varphi) ) \right]
+p(\varphi, z) = p_0\exp \left[ -\frac{g}{R_d}(\tau_{\text{int},1}(z) -\tau_{\text{int},2}(z) I_T(\varphi) ) \right]
 \end{equation} with $\tau_{\text{int},1}(z)$ and $\tau_{\text{int},2}(z)$ given by
 \begin{align}
 \tau_{\text{int},1}(z) &=\frac{1}{\Gamma} \left[ \exp\left( \frac{\Gamma z}{T_0} \right)-1 \right] + z \left(\frac{T_0-T_P}{T_0T_P} \right) \exp\left[-\left(\frac{z g}{b R_d T_0}\right)^2\right] \\
@@ -653,13 +652,13 @@ A small $\epsilon = 10^{-25}$ value avoids divisions by zero.  The vertical velo
 
 \clearpage
 
-\section{Mesoscale Storm}  \label{sec:mesoscale_storm}
+\section{Supercell}  \label{sec:supercell}
 
-The mesoscale storm test permits the study of a non-hydrostatic moist feature with strong vertical velocities and associated precipitation and is based on the work of \cite{klemp1978simulation}.
+The supercell test permits the study of a non-hydrostatic moist feature with strong vertical velocities and associated precipitation and is based on the work of \cite{klemp1978simulation}.
 
 \begin{table}[h]
 
-\caption{List of constants used for the Mesoscale Storm test}
+\caption{List of constants used for the Supercell test}
 
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lll}
 \hline Constant & Value & Description \\
@@ -757,12 +756,12 @@ R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lam
 \end{tabular}
 
 \begin{figure}[tb]
-\center\includegraphics[width=\linewidth]{plot_mesoscalestorm_init.pdf}
-  \caption{Initial state for the mesoscale storm test.}\label{fig:mesoscalestorm_init_p1}
+\center\includegraphics[width=\linewidth]{plot_supercell_init.pdf}
+  \caption{Initial state for the supercell test.}\label{fig:supercell_init_p1}
 \end{figure} 
 \begin{figure}[tb]
-\center\includegraphics[width=\linewidth]{plot_mesoscalestorm_init_p2.pdf}
-  \caption{Initial state for the mesoscale storm test (cont'd).}\label{fig:mesoscalestorm_init_p2}
+\center\includegraphics[width=\linewidth]{plot_supercell_init_p2.pdf}
+  \caption{Initial state for the supercell test (cont'd).}\label{fig:supercell_init_p2}
 \end{figure} 
 
 \subsection{Grid spacings, simulation time, output and diagnostics}
@@ -772,7 +771,7 @@ R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lam
 \item Plots of vertical velocity and rainwater should be produced at 5 km altitude after 30, 60, 90 and 120 minutes over the domain $[0, 130E] \times [40S, 40N]$.
 \item A plot of maximum vertical velocity over the duration of the simulation should be produced.
 \item Experiments could address the coupling frequency between the dynamics and physics.
-\item A variable resolution simulation should be performed that (a) studies the effect of the mesoscale storm transitioning from fine resolution to coarse resolution and (b) high resolution simulations down to 0.125$^\circ$ over the mesoscale storm.
+\item A variable resolution simulation should be performed that (a) studies the effect of the supercell transitioning from fine resolution to coarse resolution and (b) high resolution simulations down to 0.125$^\circ$ over the supercell.
 \end{itemize}
 
 

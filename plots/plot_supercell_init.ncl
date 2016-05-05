@@ -1,5 +1,5 @@
 ;***********************************************
-; plot_mesoscalestorm_init.ncl
+; plot_supercell_init.ncl
 ;***********************************************
 
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"  
@@ -14,13 +14,13 @@ begin
 ; Input parameters
 ;************************************************
 
-  datafilename = "../../../tempestmodel/test/dcmip2016/outMesoscaleStormTest/out.0000-01-01-00000.nc"
+  datafilename = "../../../tempestmodel/test/dcmip2016/outSupercellTest/out.0000-01-01-00000.nc"
 
 ;************************************************
 ; Initialize workspace
 ;************************************************
 
-  wks = gsn_open_wks("eps","plot_mesoscalestorm_init")   
+  wks = gsn_open_wks("eps","plot_supercell_init")   
 
 ;************************************************
 ; Plot resources [options]
@@ -92,7 +92,7 @@ begin
   end do
 
 ; ---
-  z = lev * 30.0
+  z = lev * 20.0
   p&lev = z
   pd&lev = z
   t&lev = z
@@ -104,9 +104,9 @@ begin
 ; ---
 
   res_u@cnLevelSelectionMode= "ManualLevels"
-  res_u@cnLevelSpacingF   = 2.0
-  res_u@cnMinLevelValF    = -16.0
-  res_u@cnMaxLevelValF    = 16.0
+  res_u@cnLevelSpacingF   = 2.5
+  res_u@cnMinLevelValF    = -15.0
+  res_u@cnMaxLevelValF    = 15.0
 
   res_u@tiYAxisString     = "Altitude (km)"
   res_u@gsnCenterString   = "Zonal velocity"
@@ -116,7 +116,7 @@ begin
   res_qv@cnLevelSelectionMode= "ManualLevels"
   res_qv@cnLevelSpacingF   = 2.0
   res_qv@cnMinLevelValF    = 2.0
-  res_qv@cnMaxLevelValF    = 20.0
+  res_qv@cnMaxLevelValF    = 14.0
 
   res_qv@tiYAxisString     = "Altitude (km)"
   res_qv@gsnCenterString   = "Specific Humidity"
@@ -126,10 +126,10 @@ begin
 ; ---
 
   res_theta@cnLevelSelectionMode= "ExplicitLevels"
-  res_theta@cnLevels = (/300., 310., 320., 330., 340., 350., 360., 380., 400./)
+  res_theta@cnLevels = (/300., 310., 320., 330., 340., 350., 360., 380., 400., 420., 440., 460., 480., 500./)
 
   res_theta@tiYAxisString     = "Altitude (km)"
-  res_theta@gsnCenterString   = "Potential Temperature (~F5~q~F~)"
+  res_theta@gsnCenterString   = "Virtual Potential Temperature (~F5~q~F~~B~v~E~  )"
   res_theta@gsnRightString    = "(K)"
   plot(2) = gsn_csm_contour(wks,theta(0,:,:,0),res_theta)
 
@@ -145,7 +145,7 @@ begin
   res_thetad@gsnSpreadColorEnd = 150
 
   res_thetad@tiYAxisString     = "Altitude (km)"
-  res_thetad@gsnCenterString   = "~F5~q~F~ - ~F5~q~F~~B~eq~E~"
+  res_thetad@gsnCenterString   = "~F5~q~F~~B~v~E~  - ~F5~q~F~~B~v,eq~E~"
   res_thetad@gsnRightString    = "(K)"
   plot(3) = gsn_csm_contour(wks,thetad(0,:,:,0),res_thetad)
 
