@@ -33,7 +33,7 @@
 \maketitle
 
 \begin{center}
-Version 0.2 \\
+Version 0.3 \\
 \today
 \end{center}
 
@@ -172,7 +172,101 @@ Most prominently these include the scaling of the radius, the rotational speed, 
 \label{sec:notes_output}
 \subsubsection{NetCDF}
 A fundamental requirement for the exchange of scientific data is the ability to  precisely describe the physical quantities being represented. Therefore, special attention needs to be paid to the representation of the model data in the output files. We require data in the `Network Common Data Form' (netCDF) \cite{netcdf} that adhere to the netCDF Climate and Forecast (CF) metadata convention (if possible to version 1.6 from Dec. 2011 \cite{netcdf-cf}). All netCDF files should have the file name extension `.nc'.
-We specify details of the netCDF requirements in Appendix~\ref{sec:netcdf} and will also provide help via NCO operators before the DCMIP event to make the data CF-compliant if necessary. Please communicate your output constraints or concerns (if any) to the DCMIP organizers as soon as possible. We will also ask for example data sets before the DCMIP event.
+We specify details of the netCDF requirements in Appendix~\ref{sec:netcdf} and will also provide help via NCO operators before the DCMIP event to make the data CF-compliant if necessary. Please communicate your output constraints or concerns (if any) to the DCMIP organizers as soon as possible.
+
+\subsubsection{Naming convention for output file names}
+The naming convention for the final output file names is:
+\vspace{0.2cm}
+
+\noindent
+model.test\_case.horizontal\_resolution.levels.grid.equation.description.nc
+
+\vspace{0.2cm}
+\noindent
+NetCDF-CF compliant files with these naming conventions will be uploaded to the Earth System Grid Federation.
+The optional free-text character string at the end of the file name (``description'') might be used to denote a special setting, such as a varied non-default diffusion coefficient or the selection of a variable-resolution configuration.
+The standard keywords for the DCMIP models are listed in the left columns of Tables \ref{tab:keywords} and \ref{tab:keywordsgrid}. The keyword for the number of vertical levels, e.g. ``L30'', denotes the number of the full model levels (here 30). In case a model also employs interface levels, this setting indirectly implies that the model has one more interface level. Examples are \\
+\vspace{0.0cm}
+
+\noindent
+cam-se.161.r200.L60.latlon.hydro.4th\_order\_div\_damping.nc \\
+tempest.162.r100.L120.interp\_latlon.nonhydro.nc \\
+fv3.162.r50.L30.cubed.nonhydro.nc \\
+cam-se.162.r50.L30.interp\_latlon.hydro.double\_K4\_2e15.nc \\
+cam-se.163.r25.L30.interp\_latlon.hydro.variable\_220\_25km.nc \\
+
+The last example expresses the suggested naming convention for a variable-resolution simulation. The keyword `r25' denotes the finest grid spacing in the variable-resolution run which is, in this example,  interpolated to a regular latitude-longitude grid with a fine grid spacing of about 28 km. The free-text `description' contains the suggested keyword 'variable' and specifies details about the resolution range in the variable-resolution run. In addition to such an interpolated data set, the original output file of a variable-resolution simulation should also be archived. Its name should be `cam-se.163.r25.L30.cubed.hydro.variable\_220\_25km.nc'  for the example above, where the specification `cubed' for the underlying base grid has been chosen.
+
+\begin{table}[h]
+\caption{Keywords for the output file naming convention.} \label{tab:keywords}
+%\ \\
+\begin{tabular*}{\textwidth}{ll}
+%\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
+\hline
+model \hspace{2cm}\T \B & Organization  \\ \hline 
+cam-se &  DOE/SNL \& NCAR \\
+chombo &  DOE/LBNL \& NCAR \\
+csu  \B & Colorado State University  \\ \hline 
+dynamico & IPSL \\
+endgame &  UK Met Office\\
+gem & Environment Canada \\
+homme-nh & DOE/SNL \& CU Boulder \\
+fv3 & NOAA GFDL \\
+icon & MPI \& DWD \\
+ifs-fv & ECMWF \\
+neptune & NRL \& NPS \\
+nicam & RIKEN \& University of Tokyo \\
+mpas & NCAR \& Los Alamos National Laboratory \\
+olam & University of Miami \\
+tempest & University of California, Davis \\
+\hline 
+\end{tabular*}
+\end{table}
+
+\begin{table}[h]
+\caption{Continuation of the list of keywords for the output file naming convention: Grid specifications.} \label{tab:keywordsgrid}
+%\ \\
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
+\hline 
+test\_case \T \B & Description of the test case number \\  \hline 
+161 \T& Moist baroclinic wave \\
+162 & Idealized tropical cyclone \\
+163 & Supercell \\ 
+horizontal\_resolution \T \B & Approximate grid spacing in degrees or equatorial grid spacing (unscaled)\\ \hline 
+r200 \T & between 2$^\circ$-3.0$^\circ\quad\;\;\,\,$  or 200-300 km (on unscaled planet)\\
+r100 & between 1$^\circ$-1.5$^\circ\quad\;\;\,\,$ or 100-150 km (on unscaled planet)\\
+r50 & between 0.5$^\circ$-1.0$^\circ \quad\,$ or 50-100 km (on unscaled planet)\\
+r25 \B& between 0.25$^\circ$-0.5$^\circ\,$ or 25-50 km (on unscaled planet)\\  \hline
+levels \T \B & Number of vertical levels (full model levels)\\  \hline
+L10  \T& 10 levels \\
+L15 & 15 levels \\
+L20 & 20 levels \\
+L30 & 30 levels \\
+L60 & 60 levels \\
+L120 \B & 120 levels \\
+\hline 
+grid \T \B& Type of native grid or indicator of interpolated grid \\ \hline
+cubed \T & cubed sphere \\
+hex & hexagonal grid based on an icosahedron, maybe optimized via spring dynamics\\
+gauss & Gaussian grid \\
+tri & triangular grid based on an icosahedron, maybe optimized via spring dynamics\\
+interp\_latlon & interpolated latitude-longitude grid \\
+latlon & latitude-longitude \\
+oct & octagonal \\
+red\_latlon & reduced latitude-longitude grid \\
+red\_gauss & reduced Gaussian grid \\
+voronoi & spherical centriodal Voronoi tessellation \\
+yinyang \B & Yin-Yang \\ \hline
+equation \T \B & Indicator for hydrostatic or non-hydrostatic simulation \\  \hline
+hydro  \T & hydrostatic \\
+nonhydro  \B & non-hydrostatic \\
+\hline
+\end{tabular*}
+\end{table}
+
+
+\subsection{Short Note on Data Analysis and Visualization}
+We will provide NCAR Command Language (NCL) scripts to help visualize the model results and provide analysis functions. In addition, the DCMIP participants will have access to interactive Graphical User Interfaces (GUIs) to support the visualization and model intercomparison. Among the GUIs are the netCDF viewers Ncview and Panoply which are public domain tools and locally installed on the NCAR mirage server. In addition, we expect to provide some basic online visualization capabilities via NOAA's Live Access Server (LAS) software. A key to the successful visualization is the adherence of the output data sets to the netCDF-CF standard (see Appendix \ref{sec:netcdf}).
 
 \subsubsection{Computational grid}
 Most DCMIP models utilize non-orthogonal computational grids like cubed-sphere grids, icosahedral grids, hexagonal grid, Voronoi grids or Yin-Yang grids. Among the mix of DCMIP GCMs are even models that provide provisions for variable-resolution grids. We encourage the use of the variable-resolution configurations as an additional test option whenever possible.
@@ -1038,8 +1132,7 @@ The ``time\_frequency'' attribute indicates the output frequency in seconds (s),
  time_frequency = "day"
  time_frequency = "100s"
  \end{verbatim}
-for the 1-hourly, 6-hourly, daily, or 100-second output. The last ``100s'' entry refers to the unscaled time in the non-rotating small-planet experiments 21, 22 and 31. However, the rotating small-planet experiments (411, 412, 413) with the scaled ``daily'' output need to be specified with the scaled time\_frequency attribute ``day'' to make the comparison to the unscaled experiment 410 simple.
-Other global attributes might also be present as shown in the example in section \ref{netcdf-example}.
+for the 1-hourly, 6-hourly, daily, or 100-second output.  Other global attributes might also be present as shown in the example in section \ref{netcdf-example}.
 
 \subsection{Coordinates, variable names, metadata}
 The standard netCDF variable names (here denoted as ``acronyms''), the requested physical `units' attribute, a suggested `long\_name' and the standardized netCDF attribute `standard\_name' are listed in Tables \ref{tab:netcdf} and \ref{tab:netcdf_opt}. The entry for the netCDF attribute `long\_name' can be freely selected. However, if `standard\_name' is present its value must come from the standard netCDF  CF-compliant entries listed below. The `units' and `long\_name' attributes need to be part of the metadata of the netCDF output file. The `standard\_name' might be added as an option.
@@ -1062,11 +1155,11 @@ $\omega$ & OMEGA & Pa/s & Vertical pressure velocity & lagrangian\_tendency\_of\
 $p$ & P & Pa & Pressure & air\_pressure\\
 $T$ & T & K & Temperature & air\_temperature\\
 $q$ & Q & kg/kg & Specific humidity & specific\_humidity\\
+$qc$ & Qc & kg/kg & Cloud water mixing ratio & \\
+$qr$ & Qr & kg/kg & Rain water mixing ratio & \\
 $P_{ls}$ & PRECL & m/s & Large-scale precipitation rate & rainfall\_rate\\
-$q1$ & Q1 & kg/kg & Tracer mixing ratio q1 & \\
-$q2$ & Q2 & kg/kg & Tracer mixing ratio q2 & \\
-$q3$ & Q3 & kg/kg & Tracer mixing ratio q3 & \\
-$q4$ & Q4 & kg/kg & Tracer mixing ratio q4 & \\
+$q_{Cl}$ & Q1 & kg/kg & Singlet chlorine mixing ratio & \\
+$q_{Cl2}$ & Q2 & kg/kg & Chlorine gas mixing ratio & \\
 \hline 
 \end{tabular*}
 \end{table}
@@ -1092,15 +1185,15 @@ $T_{850}$ & T850 & K & Temperature at 850 hPa  \\
 
 \subsection{Example: Selected entries of a netCDF file with latitude-longitude grid}
 \label{netcdf-example}
-An example of selected entries of an NCAR CAM-FV output file `cam-fv.42.medium.L30'  is shown below. The simulation was run at the medium resolution on a regular $181 \times 360$ latitude-longitude grid with grid spacing $1^{\circ} \times 1^{\circ}$ (including the poles) and 30 hybrid $\eta$-levels. Note that this output data set also lists the approximate (reference) pressure positions of the 30 full levels (lev) and 31 model interface levels (ilev) as well as the hybrid coefficients for the full (hyam, hybm) and half levels (hyai, hybi). The latter can be used in combination with the surface pressure to reconstruct the actual pressure at each grid point as explained in section \ref{appendix:verticalcord} (where hyam and hybm correspond to the coefficients $A_k$ and $B_k$ in (\ref{coeff_A}) and (\ref{coeff_B})). The surface geopotential PHIS is provided as a 3D data set despite its time-independency. The time-dependent data sets PS, U, V, T and OMEGA (actual data not listed) contain 61 instantaneous 6-hourly snapshots between day 0 and 15. In addition, the NetCDF header also lists variables on the 850 hPa pressure surface.
+An example of selected entries of an NCAR CAM-FV output file `cam-fv.42.medium.L30'  is shown below. The simulation was run at the medium resolution on a regular $181 \times 360$ latitude-longitude grid with grid spacing $1^{\circ} \times 1^{\circ}$ (including the poles) and 30 hybrid $\eta$-levels. Note that this output data set also lists the approximate (reference) pressure positions of the 30 full levels (lev) and 31 model interface levels (ilev) as well as the hybrid coefficients for the full (hyam, hybm) and half levels (hyai, hybi). The latter can be used in combination with the surface pressure to reconstruct the actual pressure at each grid point. The surface geopotential PHIS is provided as a 3D data set despite its time-independency. The time-dependent data sets PS, U, V, T and OMEGA (actual data not listed) contain 61 instantaneous 6-hourly snapshots between day 0 and 15. In addition, the NetCDF header also lists variables on the 850 hPa pressure surface.
 
-Desirable output quantities are the time step 'mdt' used for the simulation (here it represents the physics time step 1800 s), and the `gw' field. The latter contains the latitudinal area-based (``Gaussian'') weights that need to be used for area-averages on the latitude-longitude grid. The sum of these `gw' weights is 2.
+Desirable output quantities are the time step `mdt' used for the simulation (here it represents the physics time step 1800 s), and the `gw' field. The latter contains the latitudinal area-based (``Gaussian'') weights that need to be used for area-averages on the latitude-longitude grid. The sum of these `gw' weights is 2.
 
  \vspace{0.5cm}
 \noindent
 Example of a NetCDF file (header and selected entries and data sets):
 \begin{verbatim}
-netcdf cam-fv.42.medium.L30.latlon.hydro.4th_order_div_damping.nc {
+netcdf cam-fv.161.r100.L30.latlon.hydro.4th_order_div_damping.nc {
 dimensions:
   lat = 181 ;
   lon = 360 ;
@@ -1186,8 +1279,8 @@ variables:
 // global attributes:
                 :Conventions = "CF-1.0" ;
                 :model = "cam-fv" ;
-                :test_case = "42" ;
-                :horizontal_resolution= "medium" ;
+                :test_case = "161" ;
+                :horizontal_resolution= "r100" ;
                 :levels = "L30" ;
                 :grid = "latlon" ;
                 :equation = "hydro";
