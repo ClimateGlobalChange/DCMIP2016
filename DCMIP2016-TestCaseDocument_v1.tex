@@ -764,12 +764,29 @@ R_{\theta}(\lambda, \varphi, z) = \left[ \left( \frac{R_c(\lambda, \varphi; \lam
   \caption{Initial state for the supercell test (cont'd).}\label{fig:supercell_init_p2}
 \end{figure} 
 
+\subsection{Uniform Diffusion} \label{sec:supercell_uniform_diffusion}
+
+The supercell test case requires uniform diffusion to be continuously applied to all prognostic variables.  This diffusion takes the form
+\begin{align}
+\pdiff{\psi}{t} &= \ldots + \nu_s \nabla^2 \psi,
+\end{align} or
+\begin{align}
+\pdiff{}{t} (\rho \psi) &= \ldots + \nu_s \nabla \cdot ( \rho \nabla \psi ),
+\end{align} for scalar quantities $\psi$ and $q$, and
+\begin{align}
+\pdiff{\vb{u}}{t} &= \ldots + \nu_v \nabla^2 \vb{u},
+\end{align} for the vector velocity $\vb{u}$.  The diffusion coefficients used in this test are $\nu_s = 1500\ \mbox{m}^2\ \mbox{s}^{-1}$ and $\nu_v = 500\ \mbox{m}^2\ \mbox{s}^{-1}$.
+
+\subsection{Physical Parameterizations}
+
+For initial verification, all physical parameterizations should be disabled (except for uniform diffusion, as described in section \ref{sec:supercell_uniform_diffusion}).
+
 \subsection{Grid spacings, simulation time, output and diagnostics}
 
 \begin{itemize}
-\item Moist simulations should be performed at 1$^\circ$ resolution with 30 vertical levels for 2 hours.
-\item Plots of vertical velocity and rainwater should be produced at 5 km altitude after 30, 60, 90 and 120 minutes over the domain $[0, 130E] \times [40S, 40N]$.
-\item A plot of maximum vertical velocity over the duration of the simulation should be produced.
+\item Moist simulations should be performed at 0.5$^\circ$, 1$^\circ$, 2$^\circ$ and 4$^\circ$ resolution with 40 uniformly spaced vertical levels for 120 minutes (7200 seconds).
+\item Maximum vertical velocity and instantaneous precipitation rate should be reported at 60 second increments.
+\item Plots of vertical velocity and rainwater should be produced at 5 km altitude after 30, 60, 90 and 120 minutes over the domain $[30W, 30E] \times [40S, 40N]$ (script provided).
 \item Experiments could address the coupling frequency between the dynamics and physics.
 \item A variable resolution simulation should be performed that (a) studies the effect of the supercell transitioning from fine resolution to coarse resolution and (b) high resolution simulations down to 0.125$^\circ$ over the supercell.
 \end{itemize}
