@@ -791,16 +791,16 @@ q_{vs}(p,T) = \left( \frac{380.0}{p} \right) \exp\left(17.27 \times \frac{T-273.
 The wind velocity is analytically defined throughout the domain.  Meridional and vertical wind is initially set to zero.  The zonal wind is obtained from
 \begin{equation}
 \overline{u}(\varphi,z) = \left\{ \begin{array}{ll}
-\displaystyle \left(U_s\frac{z}{z_t}-U_c\right)\cos(\varphi) & \mbox{for $z < z_s - \Delta z_u$}, \\[2.0ex]
-\displaystyle \left(-\frac{4}{5}+3\frac{z}{z_s}-\frac{5}{4}\frac{z^2}{z_s^2}\right)U_s-U_c & \mbox{for $\vert z-z_s \vert \leq \Delta z_u$} \\[2.0ex]
-\displaystyle \left(U_s-U_c\right)\cos(\varphi) & \mbox{for $z > z_s + \Delta z_u$}
+\displaystyle \left(U_s\frac{z}{z_s}-U_c\right)\cos(\varphi), & \mbox{for $z < z_s - \Delta z_u$}, \\[2.0ex]
+\displaystyle \left[ \left(-\frac{4}{5}+3\frac{z}{z_s}-\frac{5}{4}\frac{z^2}{z_s^2}\right)U_s-U_c \right] \cos(\varphi), & \mbox{for $\vert z-z_s \vert \leq \Delta z_u$} \\[2.0ex]
+\displaystyle \left(U_s-U_c\right)\cos(\varphi), & \mbox{for $z > z_s + \Delta z_u$}
 \end{array} \right.
 \end{equation}
 
 The equatorial profile is determined through numerical iteration.  Potential temperature at the equator is specified via
 \begin{equation}
 \theta_{\text{eq}}(z) = \left\{ \begin{array}{ll} \displaystyle \theta_0 + (\theta_{tr} - \theta_0)\left(\frac{z}{z_{tr}}\right)^{\frac{5}{4}}  & \mbox{for $0 \leq z \leq z_{tr}$,} \\[2.0ex]
-\displaystyle \theta_{tr} \exp\left(-\frac{g(z-z_{tr})}{c_pT_{tr}}\right) & \mbox{for $z_{tr} \leq z$} \end{array} \right.
+\displaystyle \theta_{tr} \exp\left(\frac{g(z-z_{tr})}{c_pT_{tr}}\right) & \mbox{for $z_{tr} \leq z$} \end{array} \right.
 \end{equation}  And relative humidity is given by
 \begin{equation}
 \overline{H}(z) = \left\{ \begin{array}{ll} \displaystyle 1 + \frac{3}{4}\left(\frac{z}{z_{tr}}\right)^{5/4} & \mbox{for $0 \leq z \leq z_{tr}$,} \\[2.0ex]

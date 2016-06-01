@@ -613,7 +613,7 @@ CONTAINS
     end if
 
     zonal_velocity = zonal_velocity * cos(lat)
-      
+  
   END FUNCTION zonal_velocity
 
 !-----------------------------------------------------------------------
