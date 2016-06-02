@@ -33,7 +33,7 @@
 !     dt     - time step (s)
 !     z      - heights of thermodynamic levels in the grid column (m)
 !     nz     - number of thermodynamic levels in the column
-!     rainnc - accumulated precip beneath the grid column (mm)
+!     precl  - Precipitation rate (m_water/s)
 !
 ! Output variables:
 !     Increments are added into t, qv, qc, qr, and rainnc which are
@@ -60,8 +60,7 @@
 !
 !=======================================================================
 
-SUBROUTINE KESSLER(theta, qv, qc, qr, rho, pk, dt, z, nz, rainnc) &
-  BIND(c, name = "kessler")
+SUBROUTINE KESSLER(theta, qv, qc, qr, rho, pk, dt, z, nz, precl)
 
   IMPLICIT NONE
 
@@ -73,11 +72,13 @@ SUBROUTINE KESSLER(theta, qv, qc, qr, rho, pk, dt, z, nz, rainnc) &
             theta   ,     & ! Potential temperature (K)
             qv      ,     & ! Water vapor mixing ratio (gm/gm)
             qc      ,     & ! Cloud water mixing ratio (gm/gm)
-            qr      ,     & ! Rain  water mixing ratio (gm/gm)
+            qr              ! Rain  water mixing ratio (gm/gm)
+
+  REAL(8), DIMENSION(nz), INTENT(IN) :: &
             rho             ! Dry air density (not mean state as in KW) (kg/m^3)
 
-  REAL(8), INTENT(INOUT) :: &
-            rainnc          ! Accumulated precip beneath the grid column (mm)
+  REAL(8), INTENT(OUT) :: &
+            precl          ! Precipitation rate (m_water / s)
 
   REAL(8), DIMENSION(nz), INTENT(IN) :: &
             z       ,     & ! Heights of thermo. levels in the grid column (m)
@@ -117,6 +118,11 @@ SUBROUTINE KESSLER(theta, qv, qc, qr, rho, pk, dt, z, nz, rainnc) &
   end do
 
   ! Maximum time step size in accordance with CFL condition
+  if (dt .le. 0.d0) then
+    write(*,*) 'kessler.f90 called with nonpositive dt'
+    stop
+  end if
+
   dt_max = dt
   do k=1,nz-1
     if (velqr(k) .ne. 0.d0) then
@@ -129,10 +135,12 @@ SUBROUTINE KESSLER(theta, qv, qc, qr, rho, pk, dt, z, nz, rainnc) &
   dt0 = dt / real(rainsplit,8)
 
   ! Subcycle through rain process
+  precl = 0.d0
+
   do nt=1,rainsplit
 
-    ! Precipitation accumulated beneath the column (mm rain)
-    rainnc = rainnc + 1000.d0*rho(1)*qr(1)*velqr(1)*dt0/rhoqr
+    ! Precipitation rate (m/s)
+    precl = precl + rho(1) * qr(1) * velqr(1) / rhoqr
 
     ! Sedimentation term using upstream differencing
     do k=1,nz-1
@@ -173,6 +181,8 @@ SUBROUTINE KESSLER(theta, qv, qc, qr, rho, pk, dt, z, nz, rainnc) &
       end do
     end if
   end do
+
+  precl = precl / dble(rainsplit)
 
 END SUBROUTINE KESSLER
 
