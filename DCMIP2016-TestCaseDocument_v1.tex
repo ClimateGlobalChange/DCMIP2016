@@ -33,7 +33,7 @@
 \maketitle
 
 \begin{center}
-Version 0.3 \\
+Version 0.4 \\
 \today
 \end{center}
 
@@ -179,7 +179,7 @@ The naming convention for the final output file names is:
 \vspace{0.2cm}
 
 \noindent
-model.test\_case.horizontal\_resolution.levels.grid.equation.description.nc
+model.test\_case.horizontal\_resolution.levels.grid.equation.description.variable.nc
 
 \vspace{0.2cm}
 \noindent
@@ -189,11 +189,11 @@ The standard keywords for the DCMIP models are listed in the left columns of Tab
 \vspace{0.0cm}
 
 \noindent
-cam-se.161.r200.L60.latlon.hydro.4th\_order\_div\_damping.nc \\
-tempest.162.r100.L120.interp\_latlon.nonhydro.nc \\
-fv3.162.r50.L30.cubed.nonhydro.nc \\
-cam-se.162.r50.L30.interp\_latlon.hydro.double\_K4\_2e15.nc \\
-cam-se.163.r25.L30.interp\_latlon.hydro.variable\_220\_25km.nc \\
+cam-se.161.r200.L60.latlon.hydro.4th\_order\_div\_damping.U.nc \\
+tempest.162.r100.L120.interp\_latlon.nonhydro.V.nc \\
+fv3.162.r50.L30.cubed.nonhydro.Theta.nc \\
+cam-se.162.r50.L30.interp\_latlon.hydro.double\_K4\_2e15.T.nc \\
+cam-se.163.r25.L30.interp\_latlon.hydro.variable\_220\_25km.PS.nc \\
 
 The last example expresses the suggested naming convention for a variable-resolution simulation. The keyword `r25' denotes the finest grid spacing in the variable-resolution run which is, in this example,  interpolated to a regular latitude-longitude grid with a fine grid spacing of about 28 km. The free-text `description' contains the suggested keyword 'variable' and specifies details about the resolution range in the variable-resolution run. In addition to such an interpolated data set, the original output file of a variable-resolution simulation should also be archived. Its name should be `cam-se.163.r25.L30.cubed.hydro.variable\_220\_25km.nc'  for the example above, where the specification `cubed' for the underlying base grid has been chosen.
 
