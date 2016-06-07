@@ -33,7 +33,7 @@
 \maketitle
 
 \begin{center}
-Version 0.4 \\
+Version 0.5 \\
 \today
 \end{center}
 
@@ -47,7 +47,7 @@ Email questions to \textbf{dcmip@ucar.edu}
 
 \section*{Overview of the Test Case Suite}
 
-The set of test cases collected in this document has been developed for the 2016 Dynamical Core Model Intercomparison Project (DCMIP2016) in an effort to understand the broad treatment of the equations of motion within a variety of atmospheric General Circulation Models (GCMs). In contrast with the test cases described in the DCMIP2012 and DCMIP2008 test case documents, the suite of test cases that are described here focus on issues related to physics-dynamics coupling, non-hydrostatic scales and modeling systems that support variable resolution.  To better isolate these features, the majority of tests described in this document do not include topographic forcing and emphasize features that have a relatively small spatial footprint relative to the global simulation domain.  The tests proposed here have been drawn from the recent literature on global model intercomparison testing.  To support the integration of these tests into existing models, a collection of initialization routines have been provided that can be used for very quickly setting up the initial conditions.  Augmented Kessler physics routines have also been provided to support simple moisture feedbacks, a boundary layer parameterization and surface friction.  If models provide both a shallow-atmosphere and deep-atmosphere configuration, we recommend the shallow-atmosphere setup to avoid imbalances in the initial conditions. It is further expected that most models will be run under a non-hydrostatic configuration, which will permit a correct solution to the supercell test.  If models can be configured both as a hydrostatic and non-hydrostatic dynamical core, additional hydrostatic simulations might be conducted to evaluate the direct impact of the hydrostatic approximation.  Table \ref{tab:TestCases} provides an overview of all test cases described in this document.
+The set of test cases collected in this document has been developed for the 2016 Dynamical Core Model Intercomparison and (DCMIP2016) in an effort to understand the broad treatment of the equations of motion within a variety of atmospheric General Circulation Models (GCMs). In contrast with the test cases described in the DCMIP2012 and DCMIP2008 test case documents, the suite of test cases that are described here focus on issues related to physics-dynamics coupling, non-hydrostatic scales and modeling systems that support variable resolution.  To better isolate these features, the majority of tests described in this document do not include topographic forcing and emphasize features that have a relatively small spatial footprint relative to the global simulation domain.  The tests proposed here have been drawn from the recent literature on global model intercomparison testing.  To support the integration of these tests into existing models, a collection of initialization routines have been provided that can be used for very quickly setting up the initial conditions.  Augmented Kessler physics routines have also been provided to support simple moisture feedbacks, a boundary layer parameterization and surface friction.  If models provide both a shallow-atmosphere and deep-atmosphere configuration, we recommend the shallow-atmosphere setup to avoid imbalances in the initial conditions. It is further expected that most models will be run under a non-hydrostatic configuration, which will permit a correct solution to the supercell test.  If models can be configured both as a hydrostatic and non-hydrostatic dynamical core, additional hydrostatic simulations might be conducted to evaluate the direct impact of the hydrostatic approximation.  Table \ref{tab:TestCases} provides an overview of all test cases described in this document.
 
 \begin{table}[h]
 
@@ -179,7 +179,7 @@ The naming convention for the final output file names is:
 \vspace{0.2cm}
 
 \noindent
-model.test\_case.horizontal\_resolution.levels.grid.equation.description.variable.nc
+model.experiment\_id.horizontal\_resolution.levels.grid.equation.description.variable.nc
 
 \vspace{0.2cm}
 \noindent
@@ -228,11 +228,13 @@ tempest & University of California, Davis \\
 %\ \\
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll}
 \hline 
-test\_case \T \B & Description of the test case number \\  \hline 
+experiment\_id \T \B & Description of the test case number \\  \hline 
 161 \T& Moist baroclinic wave \\
-162 & Idealized tropical cyclone \\
+161-preciponly \T& Moist baroclinic wave w/ no PBL or surface fluxes \\
+162-rjpbl & Idealized tropical cyclone w/ Reed-Jablonowski PBL \\
+162-bryanpbl & Idealized tropical cyclone w/ Bryan PBL \\
 163 & Supercell \\ 
-horizontal\_resolution \T \B & Approximate grid spacing in degrees or equatorial grid spacing (unscaled)\\ \hline 
+\hline horizontal\_resolution \T \B & Approximate grid spacing in degrees or equatorial grid spacing (unscaled)\\ \hline 
 r200 \T & between 2$^\circ$-3.0$^\circ\quad\;\;\,\,$  or 200-300 km (on unscaled planet)\\
 r100 & between 1$^\circ$-1.5$^\circ\quad\;\;\,\,$ or 100-150 km (on unscaled planet)\\
 r50 & between 0.5$^\circ$-1.0$^\circ \quad\,$ or 50-100 km (on unscaled planet)\\
@@ -1115,22 +1117,26 @@ In particular, netCDF metadata need to be present. If models cannot adhere to th
 \subsection{Global attributes}
 We ask for netCDF ``global attributes'' that make the output files self-describing and searchable by cyberinfrastructure tools. We ask for the inclusion of the global attributes
 \begin{itemize}
-\item model
-\item test\_case
+\item Conventions = ``CF-1.0''
+\item project\_id = ``DCMIP2016''
+\item institute\_id
+\item experiment\_id
+\item model\_id
+\item frequency
+\item modeling\_realm = ``atmos''
 \item horizontal\_resolution
 \item levels
 \item grid
 \item equation
-\item time\_frequency
 \item description
 \end{itemize}
-The first six entries need to follow the file naming convention outlined in Tables \ref{tab:keywords} and \ref{tab:keywordsgrid} with one exception for models with non-latitude-longitude computational grids. The ``grid'' attribute needs to indicate the computational base grid like ``cubed'' for a cubed-sphere model regardless of any interpolations to a regular latitude-longitude output grid. The models will then be searchable on the DCMIP webpage according to their computational meshes.
-The ``time\_frequency'' attribute indicates the output frequency in seconds (s), hours (hr) or days (day), and needs be specified as e.g.
+The entries for ``model\_id'' need to follow the file naming convention outlined in Table \ref{tab:keywords}.  The entries for ``experiment\_id'', ``horizontal\_resolution'', ``levels'', ``grid'' and ``equation'' should follow the conventions outlined in Table \ref{tab:keywordsgrid}. The ``grid'' attribute needs to indicate the computational base grid like ``cubed'' for a cubed-sphere model regardless of any interpolations to a regular latitude-longitude output grid. The models will then be searchable on the DCMIP webpage according to their computational meshes.
+The ``frequency'' attribute indicates the output frequency in seconds (s), hours (hr) or days (day), and needs be specified as e.g.
 \begin{verbatim}
- time_frequency = "1hr"
- time_frequency = "6hr"
- time_frequency = "day"
- time_frequency = "100s"
+ frequency = "1hr"
+ frequency = "6hr"
+ frequency = "day"
+ frequency = "100s"
  \end{verbatim}
 for the 1-hourly, 6-hourly, daily, or 100-second output.  Other global attributes might also be present as shown in the example in section \ref{netcdf-example}.
 
@@ -1278,14 +1284,17 @@ variables:
     
 // global attributes:
                 :Conventions = "CF-1.0" ;
-                :model = "cam-fv" ;
-                :test_case = "161" ;
+                :project_id = "DCMIP2016"
+                :institude_id = "NCAR"
+                :experiment_id = "161" ;
+                :model_id = "cam-fv" ;
+                :frequency = "6hr";
+                :modeling_realm = "atmos"
                 :horizontal_resolution= "r100" ;
                 :levels = "L30" ;
                 :grid = "latlon" ;
                 :equation = "hydro";
-                :time_frequency = "6hr";
-                :description = "4th-oder divergence damping" ;
+                :description = "4th-order divergence damping" ;
 
 data:
 
