@@ -504,14 +504,14 @@ The following diagnostics are used in this test case:
 \begin{itemize}
 \item Average column integrated mixing ratio (two-dimensional variable):
 \begin{equation}
-<q>=\frac{\int_{z=0}^{z_{top}} q\, dz}{\int_{z=0}^{z_{top}} dz}.
+<q>(\lambda,\theta)=\frac{\int_{z=0}^{z_{top}} q(\lambda,\theta,z)\, \rho(\lambda,\theta,z)\, dz}{\int_{z=0}^{z_{top}} \rho(\lambda,\theta,z) dz}.
 \end{equation}
-where $q=q_{Cl},q_{Cl2}$. The global integrals should be computed consistently with the numerical method (preferably `inline' in the source code on the native grid and not using interpolated data).
+where $q=q_{Cl},q_{Cl2}$ and $\rho$ is density. The global integrals should be computed consistently with the numerical method (preferably `inline' in the source code on the native grid and not using interpolated data).
 \item $\ell_2(t)$, $\ell_\infty(t)$ and relative mass change $\Delta M(t)$ error norms for Cl$_y$:
 \begin{align}
-\ell_2(t)&=\frac{\sqrt{\int_{z=0}^{z_{top}}\left(<q_{Cly}>-4.0\times 10^{-6}\right)^2 dz}}{\sqrt{\int_{z=0}^{z_{top}}\left(4.0\times 10^{-6}\right)^2 dz}},\\
+\ell_2(t)&=\frac{\sqrt{I\left[ \left(<q_{Cly}>-4.0\times 10^{-6}\right)^2\right] }}{\sqrt{I\left[\left(4.0\times 10^{-6}\right)^2\right]}},\\
 \ell_\infty(t)&=\frac{\max_{\text{all }\lambda, \theta} |<q_{Cly}>-4.0\times 10^{-6}|}{4.0\times 10^{-6}},\\
-\Delta M(t)&=\frac{\int_{z=0}^{z_{top}}q_{Cly}dz-M_0}{M_0}
+\Delta M(t)&=\frac{\int_{z=0}^{z_{top}} \left\{ I\left[q_{Cly}\right]\right\}\, dz -M_0}{M_0}
 \end{align}
 respectively, where
 \begin{equation}
@@ -519,9 +519,11 @@ respectively, where
 \end{equation}
 and $M_0$ is the initial mass of Cl$_y$
 \begin{equation}
-M_0=\int_{z=0}^{z_{top}}4.0\times 10^{-6}dz.
+M_0=\int_{z=0}^{z_{top}} \left\{ I\left[4.0\times 10^{-6}\right]\, \rho\, \right\} dz.
 \end{equation}
 \end{itemize}
+$I\left[ \cdot \right]$ is the global horizontal integral consistent with the numerical method.\\
+
 Note that if the physics-dynamics coupling procedure breaks $Cl_y$ conservation it can be very subtle but shows in the $\Delta M(t)$ diagnostic (see, e.g., Figure \ref{fig:terminator-diags}).
 %\begin{equation}
 %q_{Cly}=q_{Cl}+2q_{Cl2}.
