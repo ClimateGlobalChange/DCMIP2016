@@ -103,7 +103,7 @@ begin
   res_t@tiYAxisString     = "Altitude (km)"
   res_t@gsnCenterString   = "Temperature"
   res_t@gsnRightString    = "(K)"
-  plot(0) = gsn_csm_contour(wks,t(0,:,:,180),res_t) 
+  plot(0) = gsn_csm_contour(wks,t(0,:,:,0),res_t) 
 
   res_theta@cnLevelSelectionMode= "ExplicitLevels"
   res_theta@cnLevels = (/250., 260., 270., 280., 290., 300., 310., 320., 330., 340., 350., 360., 380., 400., 450., 500., 550., 600., 650., 700./)
@@ -111,7 +111,7 @@ begin
   res_theta@tiYAxisString     = "Altitude (km)"
   res_theta@gsnCenterString   = "Potential Temperature"
   res_theta@gsnRightString    = "(K)"
-  plot(1) = gsn_csm_contour(wks,theta(0,:,:,180),res_theta)
+  plot(1) = gsn_csm_contour(wks,theta(0,:,:,0),res_theta)
 
 ; ---
 
